@@ -24,20 +24,91 @@
 
 package be.yildizgames.common.compression;
 
-import java.io.File;
+import java.io.*;
+import java.net.URLDecoder;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Grégory Van den Borre
  */
 public class ZipUnpacker implements Unpacker {
 
-    @Override
-    public void unpack(File file, File destination) {
+    /**
+     * Size of the buffer to use.
+     */
+    private static final int BUFFER_SIZE = 1024;
 
+
+    @Override
+    public void unpack(File archive, File destination, boolean keepRootDir) {
+        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.getAbsolutePath(), "UTF-8"))) {
+            String rootDir = "";
+            destination.mkdirs();
+            Enumeration<? extends ZipEntry> entries = file.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry zipentry = entries.nextElement();
+                if (zipentry.isDirectory()) {
+                    if (!keepRootDir && rootDir.isEmpty()) {
+                        rootDir = zipentry.getName();
+                    } else {
+                        new File(destination.getAbsolutePath() + File.separator + zipentry.getName().replace(rootDir, "")).mkdirs();
+                    }
+                } else {
+                    File current;
+                    if (keepRootDir) {
+                        current = new File(destination.getAbsolutePath() + File.separator + zipentry.getName());
+                    } else {
+                        current = new File(destination.getAbsolutePath() + File.separator + zipentry.getName().replace(rootDir, ""));
+                    }
+                    try(InputStream in = file.getInputStream(zipentry); OutputStream out = new FileOutputStream(current)) {
+                        extractFile(in, out);
+                    }
+                }
+            }
+        } catch (IOException ioe) {
+            throw new ArchiveException(ioe);
+        }
     }
 
     @Override
     public void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination) {
+        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.getAbsolutePath(), "UTF-8"))) {
+            new File(destination + File.separator + directoryToExtract).mkdirs();
+            Enumeration<? extends ZipEntry> entries = file.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry zipentry = entries.nextElement();
+                if (zipentry.getName().replace("/", File.separator).startsWith(directoryToExtract + File.separator)) {
+                    if (zipentry.isDirectory()) {
+                        new File(zipentry.getName()).mkdir();
+                    } else {
+                        File current = new File(destination + File.separator + zipentry.getName());
+                        try(InputStream in = file.getInputStream(zipentry); OutputStream out = new FileOutputStream(current)) {
+                            extractFile(in, out);
+                        }
+                    }
+                }
+            }
+        } catch (IOException ioe) {
+            throw new ArchiveException(ioe);
+        }
+    }
 
+    /**
+     * Logic to extract the file.
+     *
+     * @param in  Zip input stream.
+     * @param out File output stream.
+     * @throws IOException If Exception occurs during the copy.
+     */
+    private static void extractFile(final InputStream in, final OutputStream out) throws IOException {
+        byte[] buf = new byte[BUFFER_SIZE];
+        int l;
+        while ((l = in.read(buf)) >= 0) {
+            out.write(buf, 0, l);
+        }
+        in.close();
+        out.close();
     }
 }

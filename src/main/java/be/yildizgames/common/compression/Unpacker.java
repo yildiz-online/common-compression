@@ -31,7 +31,23 @@ import java.io.File;
  */
 public interface Unpacker {
 
-    void unpack(File file, File destination);
+    /**
+     * Extract a directory and all its content from an archive.
+     *
+     * @param archive     Zip file to extract the data from.
+     * @param destination Path where the directory will be extracted.
+     * @param keepRootDir Keep the root directory or extract all its content.
+     * @throws ArchiveException If the archive file does not exists.
+     */
+    void unpack(File archive, File destination, boolean keepRootDir);
 
+    /**
+     * Extract a directory and all its content from an archive file.
+     *
+     * @param archive     Archive file to extract the data from.
+     * @param directoryToExtract   Directory to extract.
+     * @param destination Path where the directory will be extracted.
+     * @throws ArchiveException If the archive file does not exists.
+     */
     void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination);
 }
