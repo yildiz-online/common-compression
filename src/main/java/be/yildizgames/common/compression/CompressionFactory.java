@@ -24,14 +24,28 @@
 
 package be.yildizgames.common.compression;
 
-import java.io.File;
+import be.yildizgames.common.compression.zip.ZipArchiver;
+import be.yildizgames.common.compression.zip.ZipUnpacker;
 
 /**
  * @author Grégory Van den Borre
  */
-public class ZipArchiver implements Archiver {
-    @Override
-    public void pack(File file, File destination) {
+public class CompressionFactory {
 
+    private static final Unpacker ZIP_UNPACKER = new ZipUnpacker();
+
+    private static final Archiver ZIP_ARCHIVER = new ZipArchiver();
+
+    private CompressionFactory() {
+        super();
     }
+
+    public static Unpacker zipUnpacker() {
+        return ZIP_UNPACKER;
+    }
+
+    public static Archiver zipArchiver() {
+        return ZIP_ARCHIVER;
+    }
+
 }

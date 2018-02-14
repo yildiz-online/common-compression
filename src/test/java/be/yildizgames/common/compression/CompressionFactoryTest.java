@@ -24,32 +24,24 @@
 
 package be.yildizgames.common.compression;
 
-import be.yildizgames.common.compression.exception.ArchiveException;
+import be.yildizgames.common.compression.zip.ZipArchiver;
+import be.yildizgames.common.compression.zip.ZipUnpacker;
+import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Grégory Van den Borre
  */
-public interface Unpacker {
+class CompressionFactoryTest {
 
-    /**
-     * Extract a directory and all its content from an archive.
-     *
-     * @param archive     Zip file to extract the data from.
-     * @param destination Path where the directory will be extracted.
-     * @param keepRootDir Keep the root directory or extract all its content.
-     * @throws ArchiveException If the archive file does not exists.
-     */
-    void unpack(File archive, File destination, boolean keepRootDir);
+    @Test
+    void zipUnpacker() {
+        assertTrue(CompressionFactory.zipUnpacker() instanceof ZipUnpacker);
+    }
 
-    /**
-     * Extract a directory and all its content from an archive file.
-     *
-     * @param archive     Archive file to extract the data from.
-     * @param directoryToExtract   Directory to extract.
-     * @param destination Path where the directory will be extracted.
-     * @throws ArchiveException If the archive file does not exists.
-     */
-    void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination);
+    @Test
+    void zipArchiver() {
+        assertTrue(CompressionFactory.zipArchiver() instanceof ZipArchiver);
+    }
 }

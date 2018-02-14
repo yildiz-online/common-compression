@@ -22,21 +22,21 @@
  *
  */
 
-package be.yildizgames.common.compression;
+package be.yildizgames.common.compression.exception;
 
 import be.yildizgames.common.exception.technical.TechnicalException;
 
 public class ArchiveException extends TechnicalException {
 
-    ArchiveException(String message, Exception cause) {
+    public ArchiveException(String message, Exception cause) {
         super(message, cause);
     }
 
-    ArchiveException(Exception cause) {
+    public ArchiveException(Exception cause) {
         super(cause);
     }
 
-    ArchiveException(String s) {
+    public ArchiveException(String s) {
         super(s);
     }
 }

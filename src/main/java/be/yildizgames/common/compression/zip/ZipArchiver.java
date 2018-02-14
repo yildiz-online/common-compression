@@ -22,34 +22,18 @@
  *
  */
 
-package be.yildizgames.common.compression;
+package be.yildizgames.common.compression.zip;
 
-import be.yildizgames.common.compression.exception.ArchiveException;
+import be.yildizgames.common.compression.Archiver;
 
 import java.io.File;
 
 /**
  * @author Grégory Van den Borre
  */
-public interface Unpacker {
+public class ZipArchiver implements Archiver {
+    @Override
+    public void pack(File file, File destination) {
 
-    /**
-     * Extract a directory and all its content from an archive.
-     *
-     * @param archive     Zip file to extract the data from.
-     * @param destination Path where the directory will be extracted.
-     * @param keepRootDir Keep the root directory or extract all its content.
-     * @throws ArchiveException If the archive file does not exists.
-     */
-    void unpack(File archive, File destination, boolean keepRootDir);
-
-    /**
-     * Extract a directory and all its content from an archive file.
-     *
-     * @param archive     Archive file to extract the data from.
-     * @param directoryToExtract   Directory to extract.
-     * @param destination Path where the directory will be extracted.
-     * @throws ArchiveException If the archive file does not exists.
-     */
-    void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination);
+    }
 }

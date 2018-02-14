@@ -22,8 +22,10 @@
  *
  */
 
-package be.yildizgames.common.compression;
+package be.yildizgames.common.compression.zip;
 
+import be.yildizgames.common.compression.Unpacker;
+import be.yildizgames.common.compression.exception.ArchiveException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
