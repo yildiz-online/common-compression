@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,9 +46,8 @@ class ZipUnpackerTest {
         void happyFlow() {
             Unpacker unpacker = new ZipUnpacker();
             File zip = new File("zip");
-            assertFalse(zip.exists());
             unpacker.unpack(getFile("zip-files.zip"), zip, true);
-            assertTrue(zip.exists());
+            assertTrue(new File("zip/zip-folder-1/zip-file-1.txt").exists());
         }
 
         @Test
