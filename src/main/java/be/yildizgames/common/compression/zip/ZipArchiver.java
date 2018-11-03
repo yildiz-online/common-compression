@@ -27,13 +27,20 @@ package be.yildizgames.common.compression.zip;
 import be.yildizgames.common.compression.Archiver;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * @author Grégory Van den Borre
  */
 public class ZipArchiver implements Archiver {
+
     @Override
     public void pack(File file, File destination) {
+        // Does nothing
+    }
 
+    @Override
+    public void pack(Path file, Path destination) {
+        //FIXME implements.
     }
 }

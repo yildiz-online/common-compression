@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -80,6 +81,11 @@ public class ZipUnpacker implements Unpacker {
     }
 
     @Override
+    public void unpack(Path archive, Path destination, boolean keepRootDir) {
+        this.unpack(archive.toFile(), destination.toFile(), keepRootDir);
+    }
+
+    @Override
     public void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination) {
         try (ZipFile file = new ZipFile(URLDecoder.decode(archive.getAbsolutePath(), "UTF-8"))) {
             new File(destination + File.separator + directoryToExtract).mkdirs();
@@ -100,6 +106,11 @@ public class ZipUnpacker implements Unpacker {
         } catch (IOException ioe) {
             throw new ArchiveException(ioe);
         }
+    }
+
+    @Override
+    public void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
+        this.unpackDirectoryToDirectory(archive.toFile(), directoryToExtract, destination.toFile());
     }
 
     /**

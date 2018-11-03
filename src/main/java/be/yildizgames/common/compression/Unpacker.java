@@ -27,11 +27,24 @@ package be.yildizgames.common.compression;
 import be.yildizgames.common.compression.exception.ArchiveException;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * @author Grégory Van den Borre
  */
 public interface Unpacker {
+
+    /**
+     * Extract a directory and all its content from an archive.
+     * @deprecated Use unpack with Path
+     *
+     * @param archive     Zip file to extract the data from.
+     * @param destination Path where the directory will be extracted.
+     * @param keepRootDir Keep the root directory or extract all its content.
+     * @throws ArchiveException If the archive file does not exists.
+     */
+    @Deprecated(since="1.0.2", forRemoval = true)
+    void unpack(File archive, File destination, boolean keepRootDir);
 
     /**
      * Extract a directory and all its content from an archive.
@@ -41,7 +54,19 @@ public interface Unpacker {
      * @param keepRootDir Keep the root directory or extract all its content.
      * @throws ArchiveException If the archive file does not exists.
      */
-    void unpack(File archive, File destination, boolean keepRootDir);
+    void unpack(Path archive, Path destination, boolean keepRootDir);
+
+    /**
+     * Extract a directory and all its content from an archive file.
+     * @deprecated Use unpackDirectoryToDirectory with Path
+     *
+     * @param archive     Archive file to extract the data from.
+     * @param directoryToExtract   Directory to extract.
+     * @param destination Path where the directory will be extracted.
+     * @throws ArchiveException If the archive file does not exists.
+     */
+    @Deprecated(since="1.0.2", forRemoval = true)
+    void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination);
 
     /**
      * Extract a directory and all its content from an archive file.
@@ -51,5 +76,5 @@ public interface Unpacker {
      * @param destination Path where the directory will be extracted.
      * @throws ArchiveException If the archive file does not exists.
      */
-    void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination);
+    void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination);
 }
