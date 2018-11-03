@@ -24,16 +24,12 @@
 
 package be.yildizgames.common.compression;
 
-import java.io.File;
 import java.nio.file.Path;
 
 /**
  * @author Grégory Van den Borre
  */
 public interface Archiver {
-
-    @Deprecated
-    void pack(File file, File destination);
 
     /**
      * Compress a file.

@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,7 +47,7 @@ class ZipUnpackerTest {
         @Test
         void happyFlow() {
             Unpacker unpacker = new ZipUnpacker();
-            File zip = new File("zip");
+            Path zip = Paths.get("zip");
             unpacker.unpack(getFile("zip-files.zip"), zip, true);
             assertTrue(new File("zip/zip-folder-1/zip-file-1.txt").exists());
         }
@@ -53,12 +55,12 @@ class ZipUnpackerTest {
         @Test
         void ZipFileNotExisting() {
             Unpacker unpacker = new ZipUnpacker();
-            File zip = new File("zip");
-            assertThrows(ArchiveException.class, () -> unpacker.unpack(new File("anything"), zip, true));
+            Path zip = Paths.get("zip");
+            assertThrows(ArchiveException.class, () -> unpacker.unpack(new File("anything").toPath(), zip, true));
         }
     }
 
-    private static File getFile(String name) {
-        return new File(ZipUnpacker.class.getClassLoader().getResource(name).getFile()).getAbsoluteFile();
+    private static Path getFile(String name) {
+        return new File(ZipUnpacker.class.getClassLoader().getResource(name).getFile()).getAbsoluteFile().toPath();
     }
 }

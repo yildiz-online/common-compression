@@ -27,13 +27,13 @@ package be.yildizgames.common.compression.zip;
 import be.yildizgames.common.compression.Unpacker;
 import be.yildizgames.common.compression.exception.ArchiveException;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -50,10 +50,10 @@ public class ZipUnpacker implements Unpacker {
 
 
     @Override
-    public void unpack(File archive, File destination, boolean keepRootDir) {
-        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.getAbsolutePath(), "UTF-8"))) {
+    public void unpack(Path archive, Path destination, boolean keepRootDir) {
+        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), "UTF-8"))) {
             String rootDir = "";
-            destination.mkdirs();
+            Files.createDirectories(destination);
             Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry zipentry = entries.nextElement();
@@ -61,16 +61,16 @@ public class ZipUnpacker implements Unpacker {
                     if (!keepRootDir && rootDir.isEmpty()) {
                         rootDir = zipentry.getName();
                     } else {
-                        new File(destination.getAbsolutePath() + File.separator + zipentry.getName().replace(rootDir, "")).mkdirs();
+                        Files.createDirectories(destination.toAbsolutePath().resolve(zipentry.getName().replace(rootDir, "")));
                     }
                 } else {
-                    File current;
+                    Path current;
                     if (keepRootDir) {
-                        current = new File(destination.getAbsolutePath() + File.separator + zipentry.getName());
+                        current = destination.toAbsolutePath().resolve(zipentry.getName());
                     } else {
-                        current = new File(destination.getAbsolutePath() + File.separator + zipentry.getName().replace(rootDir, ""));
+                        current = destination.toAbsolutePath().resolve(zipentry.getName().replace(rootDir, ""));
                     }
-                    try(InputStream in = file.getInputStream(zipentry); OutputStream out = new FileOutputStream(current)) {
+                    try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(current)) {
                         extractFile(in, out);
                     }
                 }
@@ -81,23 +81,18 @@ public class ZipUnpacker implements Unpacker {
     }
 
     @Override
-    public void unpack(Path archive, Path destination, boolean keepRootDir) {
-        this.unpack(archive.toFile(), destination.toFile(), keepRootDir);
-    }
-
-    @Override
-    public void unpackDirectoryToDirectory(File archive, String directoryToExtract, File destination) {
-        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.getAbsolutePath(), "UTF-8"))) {
-            new File(destination + File.separator + directoryToExtract).mkdirs();
+    public void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
+        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), "UTF-8"))) {
+            Files.createDirectories(destination.resolve(directoryToExtract));
             Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry zipentry = entries.nextElement();
-                if (zipentry.getName().replace("/", File.separator).startsWith(directoryToExtract + File.separator)) {
+                if (zipentry.getName().replace("/", archive.getFileSystem().getSeparator()).startsWith(directoryToExtract + archive.getFileSystem().getSeparator())) {
                     if (zipentry.isDirectory()) {
-                        new File(zipentry.getName()).mkdir();
+                        Files.createDirectory(Paths.get(zipentry.getName()));
                     } else {
-                        File current = new File(destination + File.separator + zipentry.getName());
-                        try(InputStream in = file.getInputStream(zipentry); OutputStream out = new FileOutputStream(current)) {
+                        Path current = destination.resolve(zipentry.getName());
+                        try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(current)) {
                             extractFile(in, out);
                         }
                     }
@@ -106,11 +101,6 @@ public class ZipUnpacker implements Unpacker {
         } catch (IOException ioe) {
             throw new ArchiveException(ioe);
         }
-    }
-
-    @Override
-    public void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
-        this.unpackDirectoryToDirectory(archive.toFile(), directoryToExtract, destination.toFile());
     }
 
     /**
