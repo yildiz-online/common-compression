@@ -27,6 +27,7 @@ package be.yildizgames.common.compression.zip;
 import be.yildizgames.common.compression.Unpacker;
 import be.yildizgames.common.compression.exception.ArchiveException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -88,8 +89,8 @@ public class ZipUnpacker implements Unpacker {
             while (entries.hasMoreElements()) {
                 ZipEntry zipentry = entries.nextElement();
                 if (zipentry.getName().replace("/", archive.getFileSystem().getSeparator()).startsWith(directoryToExtract + archive.getFileSystem().getSeparator())) {
-                    if (zipentry.isDirectory() && Files.notExists(Paths.get(zipentry.getName()))) {
-                        Files.createDirectory(Paths.get(zipentry.getName()));
+                    if (zipentry.isDirectory()) {
+                        new File(zipentry.getName()).mkdir();
                     } else {
                         Path current = destination.resolve(zipentry.getName());
                         try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(current)) {
