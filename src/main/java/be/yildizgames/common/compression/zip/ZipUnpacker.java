@@ -90,7 +90,7 @@ public class ZipUnpacker implements Unpacker {
                 ZipEntry zipentry = entries.nextElement();
                 if (zipentry.getName().replace("/", archive.getFileSystem().getSeparator()).startsWith(directoryToExtract + archive.getFileSystem().getSeparator())) {
                     if (zipentry.isDirectory()) {
-                        new File(zipentry.getName()).mkdir();
+                        Files.createDirectory(Paths.get(zipentry.getName()));
                     } else {
                         Path current = destination.resolve(zipentry.getName());
                         try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(current)) {
@@ -100,7 +100,7 @@ public class ZipUnpacker implements Unpacker {
                 }
             }
         } catch (IOException ioe) {
-            throw new ArchiveException(ioe);
+            throw new ArchiveException("Error unpacking" + archive.toString() + ":" + destination.toString(),ioe);
         }
     }
 
