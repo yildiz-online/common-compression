@@ -88,7 +88,7 @@ public class ZipUnpacker implements Unpacker {
             while (entries.hasMoreElements()) {
                 ZipEntry zipentry = entries.nextElement();
                 if (zipentry.getName().replace("/", archive.getFileSystem().getSeparator()).startsWith(directoryToExtract + archive.getFileSystem().getSeparator())) {
-                    if (zipentry.isDirectory()) {
+                    if (zipentry.isDirectory() && Files.notExists(Paths.get(zipentry.getName()))) {
                         Files.createDirectory(Paths.get(zipentry.getName()));
                     } else {
                         Path current = destination.resolve(zipentry.getName());
