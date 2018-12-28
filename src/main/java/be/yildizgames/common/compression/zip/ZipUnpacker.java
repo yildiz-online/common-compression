@@ -27,14 +27,12 @@ package be.yildizgames.common.compression.zip;
 import be.yildizgames.common.compression.Unpacker;
 import be.yildizgames.common.compression.exception.ArchiveException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -84,14 +82,15 @@ public class ZipUnpacker implements Unpacker {
     @Override
     public void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
         try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), "UTF-8"))) {
-            Files.createDirectories(destination.resolve(directoryToExtract));
+            Files.createDirectories(destination);
             Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry zipentry = entries.nextElement();
-                if (zipentry.getName().replace("/", archive.getFileSystem().getSeparator()).startsWith(directoryToExtract + archive.getFileSystem().getSeparator())) {
-                    if (zipentry.isDirectory()) {
-                        Files.createDirectory(Paths.get(zipentry.getName()));
-                    } else {
+                String name = zipentry.getName().replace("/", archive.getFileSystem().getSeparator());
+                if (name.startsWith(directoryToExtract + archive.getFileSystem().getSeparator())) {
+                    if (zipentry.isDirectory() && Files.notExists(destination.resolve(zipentry.getName()))) {
+                        Files.createDirectory(destination.resolve(zipentry.getName()));
+                    } else if(!zipentry.isDirectory()) {
                         Path current = destination.resolve(zipentry.getName());
                         try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(current)) {
                             extractFile(in, out);
@@ -117,7 +116,5 @@ public class ZipUnpacker implements Unpacker {
         while ((l = in.read(buf)) >= 0) {
             out.write(buf, 0, l);
         }
-        in.close();
-        out.close();
     }
 }
