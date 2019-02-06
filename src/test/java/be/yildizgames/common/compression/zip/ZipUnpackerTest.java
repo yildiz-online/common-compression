@@ -42,13 +42,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Grégory Van den Borre
  */
-class ZipUnpackerTest {
+public class ZipUnpackerTest {
 
     @Nested
-    class ExtractFiles {
+    public class ExtractFiles {
 
         @Test
-        void happyFlow() throws IOException {
+        public void happyFlow() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpack(getFile("zip-files.zip"), zip, true);
@@ -56,19 +56,19 @@ class ZipUnpackerTest {
         }
 
         @Test
-        void ZipFileNotExisting() throws IOException {
+        public void ZipFileNotExisting() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             assertThrows(ArchiveException.class, () -> unpacker.unpack(Paths.get("anything"), zip, true));
         }
 
         @Test
-        void directoryAlreadyExisting() {
+        public void directoryAlreadyExisting() {
 
         }
 
         @Test
-        void fileAlreadyExisting() throws IOException {
+        public void fileAlreadyExisting() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpack(getFile("zip-files.zip"), zip, true);
@@ -78,10 +78,10 @@ class ZipUnpackerTest {
     }
 
     @Nested
-    class UnpackDirectoryToDirectory {
+    public class UnpackDirectoryToDirectory {
 
         @Test
-        void happyFlow() throws IOException {
+        public void happyFlow() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpackDirectoryToDirectory(getFile("zip-files.zip"), "zip-folder-1", zip);
@@ -89,7 +89,7 @@ class ZipUnpackerTest {
         }
 
         @Test
-        void directoryAlreadyExist() throws IOException {
+        public void directoryAlreadyExist() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpackDirectoryToDirectory(getFile("zip-files.zip"), "zip-folder-1", zip);
@@ -97,7 +97,7 @@ class ZipUnpackerTest {
         }
 
         @Test
-        void directoryNotExistInArchive() throws IOException {
+        public void directoryNotExistInArchive() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpackDirectoryToDirectory(getFile("zip-files.zip"), "zip-folder-17", zip);

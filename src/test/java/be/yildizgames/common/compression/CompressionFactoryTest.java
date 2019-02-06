@@ -33,15 +33,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Grégory Van den Borre
  */
-class CompressionFactoryTest {
+public class CompressionFactoryTest {
 
     @Test
-    void zipUnpacker() {
+    public void zipUnpacker() {
         assertTrue(CompressionFactory.zipUnpacker() instanceof ZipUnpacker);
     }
 
     @Test
-    void zipArchiver() {
+    public void zipArchiver() {
         assertTrue(CompressionFactory.zipArchiver() instanceof ZipArchiver);
     }
 }
