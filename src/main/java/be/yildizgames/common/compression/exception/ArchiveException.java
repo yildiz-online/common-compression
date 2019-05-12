@@ -26,6 +26,9 @@ package be.yildizgames.common.compression.exception;
 
 import be.yildizgames.common.exception.technical.TechnicalException;
 
+/**
+ * @author Grégory Van den Borre
+ */
 public class ArchiveException extends TechnicalException {
 
     public ArchiveException(String message, Exception cause) {

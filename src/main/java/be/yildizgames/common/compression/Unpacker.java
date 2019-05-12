@@ -29,6 +29,8 @@ import be.yildizgames.common.compression.exception.ArchiveException;
 import java.nio.file.Path;
 
 /**
+ * Unpack an archive.
+ *
  * @author Grégory Van den Borre
  */
 public interface Unpacker {

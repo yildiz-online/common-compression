@@ -47,5 +47,4 @@ public class CompressionFactory {
     public static Archiver zipArchiver() {
         return ZIP_ARCHIVER;
     }
-
 }

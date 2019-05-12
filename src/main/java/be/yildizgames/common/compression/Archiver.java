@@ -27,6 +27,7 @@ package be.yildizgames.common.compression;
 import java.nio.file.Path;
 
 /**
+ * Pack an archive.
  * @author Grégory Van den Borre
  */
 public interface Archiver {

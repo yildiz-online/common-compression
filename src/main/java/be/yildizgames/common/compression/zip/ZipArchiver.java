@@ -35,7 +35,7 @@ import java.nio.file.Path;
 public class ZipArchiver implements Archiver {
 
     @Override
-    public void pack(Path file, Path destination) {
+    public final void pack(Path file, Path destination) {
         //FIXME implements.
     }
 }

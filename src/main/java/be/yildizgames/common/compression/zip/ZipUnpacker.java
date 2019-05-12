@@ -49,7 +49,7 @@ public class ZipUnpacker implements Unpacker {
 
 
     @Override
-    public void unpack(Path archive, Path destination, boolean keepRootDir) {
+    public final void unpack(Path archive, Path destination, boolean keepRootDir) {
         try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), "UTF-8"))) {
             String rootDir = "";
             Files.createDirectories(destination);
@@ -80,7 +80,7 @@ public class ZipUnpacker implements Unpacker {
     }
 
     @Override
-    public void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
+    public final void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
         try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), "UTF-8"))) {
             Files.createDirectories(destination);
             Enumeration<? extends ZipEntry> entries = file.entries();
