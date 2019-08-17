@@ -24,7 +24,5 @@
 
 module be.yildizgames.common.compression {
 
-    requires be.yildizgames.common.exception;
-
     exports be.yildizgames.common.compression;
 }
