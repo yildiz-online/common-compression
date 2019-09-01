@@ -35,16 +35,22 @@
 
   <packaging>jar</packaging>
   <inceptionYear>2017</inceptionYear>
+
   <scm>
     <connection>scm:git:https://bitbucket.org/yildiz-engine-team/common-compression</connection>
     <developerConnection>scm:git:https://bitbucket.org/yildiz-engine-team/common-compression</developerConnection>
     <url>https://bitbucket.org/yildiz-engine-team/common-compression</url>
   </scm>
+
   <parent>
     <artifactId>parent</artifactId>
     <groupId>be.yildiz-games</groupId>
     <version>3.0.7</version>
   </parent>
+
+  <properties>
+    <java.version>11</java.version>
+  </properties>
 
   <dependencies>
     <dependency>
