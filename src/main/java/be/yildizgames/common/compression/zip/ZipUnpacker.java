@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
@@ -50,7 +51,7 @@ public class ZipUnpacker implements Unpacker {
 
     @Override
     public final void unpack(Path archive, Path destination, boolean keepRootDir) {
-        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), "UTF-8"))) {
+        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
             String rootDir = "";
             Files.createDirectories(destination);
             Enumeration<? extends ZipEntry> entries = file.entries();
@@ -81,7 +82,7 @@ public class ZipUnpacker implements Unpacker {
 
     @Override
     public final void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
-        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), "UTF-8"))) {
+        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
             Files.createDirectories(destination);
             Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
