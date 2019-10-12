@@ -70,6 +70,9 @@ public class ZipUnpacker implements Unpacker {
                     } else {
                         current = destination.toAbsolutePath().resolve(zipentry.getName().replace(rootDir, ""));
                     }
+                    if(current.getParent() != null) {
+                        Files.createDirectories(current.getParent());
+                    }
                     try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(current)) {
                         extractFile(in, out);
                     }
