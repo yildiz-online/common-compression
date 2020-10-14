@@ -22,7 +22,9 @@
  *
  */
 
-module be.yildizgames.common.compression {
+open module be.yildizgames.common.compression {
+
+    requires be.yildizgames.common.hashing;
 
     exports be.yildizgames.common.compression;
 }

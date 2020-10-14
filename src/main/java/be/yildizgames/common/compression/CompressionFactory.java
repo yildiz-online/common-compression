@@ -25,7 +25,10 @@
 package be.yildizgames.common.compression;
 
 import be.yildizgames.common.compression.zip.ZipArchiver;
+import be.yildizgames.common.compression.zip.ZipFileInfoRetriever;
 import be.yildizgames.common.compression.zip.ZipUnpacker;
+
+import java.nio.file.Path;
 
 /**
  * @author Grégory Van den Borre
@@ -46,5 +49,9 @@ public class CompressionFactory {
 
     public static Archiver zipArchiver() {
         return ZIP_ARCHIVER;
+    }
+
+    public static FileInfoRetriever zipFileInfo(Path path) {
+        return new ZipFileInfoRetriever(path);
     }
 }
