@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <name>Yildiz Common Compression</name>
   <description>Common Compression library for the yildiz project, contains utilities to compression and decompress files.</description>
-  <url>https://bitbucket.org/yildiz-engine-team/common-compression</url>
+  <url>https://github.com/yildiz-online/common-compression</url>
 
   <artifactId>common-compression</artifactId>
   <version>2.1.0-SNAPSHOT</version>
@@ -37,9 +37,9 @@
   <inceptionYear>2017</inceptionYear>
 
   <scm>
-    <connection>scm:git:https://bitbucket.org/yildiz-engine-team/common-compression</connection>
-    <developerConnection>scm:git:https://bitbucket.org/yildiz-engine-team/common-compression</developerConnection>
-    <url>https://bitbucket.org/yildiz-engine-team/common-compression</url>
+    <connection>scm:git:https://github.com/yildiz-online/common-compression</connection>
+    <developerConnection>scm:git:https://github.com/yildiz-online/common-compression</developerConnection>
+    <url>https://github.com/yildiz-online/common-compression</url>
   </scm>
 
   <parent>
