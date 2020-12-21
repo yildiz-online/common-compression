@@ -12,16 +12,19 @@
 
 package be.yildizgames.common.compression.zip;
 
-import be.yildizgames.common.compression.FileInfo;
 import be.yildizgames.common.compression.FileInfoRetriever;
 import be.yildizgames.common.hashing.Algorithm;
+import be.yildizgames.common.hashing.ComputedHash;
+import be.yildizgames.common.hashing.HashValue;
 import be.yildizgames.common.hashing.HashingFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -38,12 +41,17 @@ public class ZipFileInfoRetriever implements FileInfoRetriever {
     }
 
     @Override
-    public List<FileInfo> getFileInfo(Algorithm algorithm) {
-        var result = new ArrayList<FileInfo>();
+    public final List<HashValue> getFileInfo(Algorithm... algorithms) {
+        if(algorithms == null || algorithms.length == 0) {
+            return List.of();
+        }
+        var result = new ArrayList<HashValue>();
         try (ZipInputStream stream = new ZipInputStream(Files.newInputStream(path))) {
             ZipEntry entry;
             while ((entry = stream.getNextEntry()) != null) {
-                result.add(new FileInfo(entry.getName(), HashingFactory.get(algorithm).compute(stream)));
+                result.add(new HashValue(entry.getName(), Arrays.stream(algorithms).map(
+                        a -> new ComputedHash(HashingFactory.get(a).compute(stream), a)
+                ).collect(Collectors.toList())));
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);

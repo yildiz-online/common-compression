@@ -13,6 +13,7 @@
 package be.yildizgames.common.compression;
 
 import be.yildizgames.common.hashing.Algorithm;
+import be.yildizgames.common.hashing.HashValue;
 
 import java.util.List;
 
@@ -21,5 +22,5 @@ import java.util.List;
  */
 public interface FileInfoRetriever {
 
-    List<FileInfo> getFileInfo(Algorithm algorithm);
+    List<HashValue> getFileInfo(Algorithm... algorithm);
 }

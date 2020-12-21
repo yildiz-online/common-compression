@@ -52,7 +52,7 @@
     <dependency>
       <groupId>be.yildiz-games</groupId>
       <artifactId>common-hashing</artifactId>
-      <version>1.1.1</version>
+      <version>1.1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
