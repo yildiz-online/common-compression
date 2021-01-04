@@ -19,7 +19,6 @@ import be.yildizgames.common.hashing.HashValue;
 import be.yildizgames.common.hashing.HashingFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +51,6 @@ public class ZipFileInfoRetriever implements FileInfoRetriever {
             ZipFile zip = new ZipFile(path.toFile());
             for (Enumeration<? extends ZipEntry> e = zip.entries(); e.hasMoreElements();) {
                 ZipEntry entry = e.nextElement();
-                InputStream in = zip.getInputStream(entry);
                 result.add(new HashValue(entry.getName(), Arrays.stream(algorithms).map(
                             a -> {
                                 try {
