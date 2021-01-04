@@ -13,13 +13,11 @@
 package be.yildizgames.common.compression.zip;
 
 import be.yildizgames.common.hashing.Algorithm;
-import be.yildizgames.common.hashing.ComputedHash;
-import be.yildizgames.common.hashing.HashValue;
+import be.yildizgames.common.hashing.HashingFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * @author Grégory Van den Borre
@@ -28,10 +26,21 @@ class ZipFileInfoRetrieverTest {
 
     @Test
     void testHash() {
-        var expectedResult = List.of(
-                new HashValue("test-hash.txt", List.of(new ComputedHash("ce2fb5a360962b1394c09cbfe998116f", Algorithm.MD5))),
-                new HashValue("test-hash2.txt", List.of(new ComputedHash("0b501728d124430a56c4b42c0e6306d9", Algorithm.MD5)))
-        );
-        var result = new ZipFileInfoRetriever(Path.of("src/test/resources/test-hash.zip")).getFileInfo(Algorithm.MD5);
+        var crc1 = HashingFactory.get(Algorithm.CRC32).compute(Path.of("src/test/resources/test-hash.txt"));
+        var crc2 = HashingFactory.get(Algorithm.CRC32).compute(Path.of("src/test/resources/test-hash2.txt"));
+        var md51 = HashingFactory.get(Algorithm.MD5).compute(Path.of("src/test/resources/test-hash.txt"));
+        var md52 = HashingFactory.get(Algorithm.MD5).compute(Path.of("src/test/resources/test-hash2.txt"));
+        var sha11 = HashingFactory.get(Algorithm.SHA1).compute(Path.of("src/test/resources/test-hash.txt"));
+        var sha12 = HashingFactory.get(Algorithm.SHA1).compute(Path.of("src/test/resources/test-hash2.txt"));
+
+        var fileInfo = new ZipFileInfoRetriever(Path.of("src/test/resources/test-hash.zip")).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
+
+        Assertions.assertEquals(crc1, fileInfo.get(0).getHash().get(0).getHash());
+        Assertions.assertEquals(md51, fileInfo.get(0).getHash().get(1).getHash());
+        Assertions.assertEquals(sha11, fileInfo.get(0).getHash().get(2).getHash());
+
+        Assertions.assertEquals(crc2, fileInfo.get(1).getHash().get(0).getHash());
+        Assertions.assertEquals(md52, fileInfo.get(1).getHash().get(1).getHash());
+        Assertions.assertEquals(sha12, fileInfo.get(1).getHash().get(2).getHash());
     }
 }

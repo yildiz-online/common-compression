@@ -19,14 +19,15 @@ import be.yildizgames.common.hashing.HashValue;
 import be.yildizgames.common.hashing.HashingFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 /**
  * @author Grégory Van den Borre
@@ -46,11 +47,20 @@ public class ZipFileInfoRetriever implements FileInfoRetriever {
             return List.of();
         }
         var result = new ArrayList<HashValue>();
-        try (ZipInputStream stream = new ZipInputStream(Files.newInputStream(path))) {
-            ZipEntry entry;
-            while ((entry = stream.getNextEntry()) != null) {
+
+        try {
+            ZipFile zip = new ZipFile(path.toFile());
+            for (Enumeration<? extends ZipEntry> e = zip.entries(); e.hasMoreElements();) {
+                ZipEntry entry = e.nextElement();
+                InputStream in = zip.getInputStream(entry);
                 result.add(new HashValue(entry.getName(), Arrays.stream(algorithms).map(
-                        a -> new ComputedHash(HashingFactory.get(a).compute(stream), a)
+                            a -> {
+                                try {
+                                    return new ComputedHash(HashingFactory.get(a).compute(zip.getInputStream(entry)), a);
+                                } catch (IOException ex) {
+                                    throw new IllegalStateException(ex);
+                                }
+                            }
                 ).collect(Collectors.toList())));
             }
         } catch (IOException e) {
