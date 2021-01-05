@@ -43,4 +43,17 @@ class ZipFileInfoRetrieverTest {
         Assertions.assertEquals(md52, fileInfo.get(1).getHash().get(1).getHash());
         Assertions.assertEquals(sha12, fileInfo.get(1).getHash().get(2).getHash());
     }
+
+    @Test
+    void testHashBigFile() {
+        var crc1 = HashingFactory.get(Algorithm.CRC32).compute(Path.of("src/test/resources/amaryllis-4701720_1920.jpg"));
+        var md51 = HashingFactory.get(Algorithm.MD5).compute(Path.of("src/test/resources/amaryllis-4701720_1920.jpg"));
+        var sha11 = HashingFactory.get(Algorithm.SHA1).compute(Path.of("src/test/resources/amaryllis-4701720_1920.jpg"));
+
+        var fileInfo = new ZipFileInfoRetriever(Path.of("src/test/resources/amaryllis-4701720_1920.zip")).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
+
+        Assertions.assertEquals(crc1, fileInfo.get(0).getHash().get(0).getHash());
+        Assertions.assertEquals(md51, fileInfo.get(0).getHash().get(1).getHash());
+        Assertions.assertEquals(sha11, fileInfo.get(0).getHash().get(2).getHash());
+    }
 }
