@@ -22,10 +22,8 @@
  *
  */
 
-open module be.yildizgames.common.compression {
-
-    requires be.yildizgames.common.hashing;
-    requires org.apache.commons.compress;
-
-    exports be.yildizgames.common.compression;
-}
+/**
+ * Contains the 7ZIP implementation for archives.
+ * @author Grégory Van den Borre
+ */
+package be.yildizgames.common.compression.sevenzip;
