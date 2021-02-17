@@ -24,6 +24,9 @@
 
 package be.yildizgames.common.compression;
 
+import be.yildizgames.common.compression.sevenzip.SevenZipArchiver;
+import be.yildizgames.common.compression.sevenzip.SevenZipFileInfoRetriever;
+import be.yildizgames.common.compression.sevenzip.SevenZipUnpacker;
 import be.yildizgames.common.compression.zip.ZipArchiver;
 import be.yildizgames.common.compression.zip.ZipFileInfoRetriever;
 import be.yildizgames.common.compression.zip.ZipUnpacker;
@@ -38,6 +41,10 @@ public class CompressionFactory {
     private static final Unpacker ZIP_UNPACKER = new ZipUnpacker();
 
     private static final Archiver ZIP_ARCHIVER = new ZipArchiver();
+
+    private static final Unpacker SEVENZIP_UNPACKER = new SevenZipUnpacker();
+
+    private static final Archiver SEVENZIP_ARCHIVER = new SevenZipArchiver();
 
     private CompressionFactory() {
         super();
@@ -54,4 +61,27 @@ public class CompressionFactory {
     public static FileInfoRetriever zipFileInfo(Path path) {
         return new ZipFileInfoRetriever(path);
     }
+
+    public static Unpacker sevenZipUnpacker() {
+        return SEVENZIP_UNPACKER;
+    }
+
+    public static Archiver sevenZipArchiver() {
+        return SEVENZIP_ARCHIVER;
+    }
+
+    public static FileInfoRetriever sevenZipFileInfo(Path path) {
+        return new SevenZipFileInfoRetriever(path);
+    }
+
+    public static FileInfoRetriever fileInfo(Path path) {
+        if(path.toString().endsWith(".7z")) {
+            return new SevenZipFileInfoRetriever(path);
+        } else if (path.toString().endsWith(".zip")) {
+            return new ZipFileInfoRetriever(path);
+        } else {
+            throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+        }
+    }
+
 }

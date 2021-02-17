@@ -22,10 +22,19 @@
  *
  */
 
-open module be.yildizgames.common.compression {
+package be.yildizgames.common.compression.sevenzip;
 
-    requires be.yildizgames.common.hashing;
-    requires org.apache.commons.compress;
+import be.yildizgames.common.compression.Archiver;
 
-    exports be.yildizgames.common.compression;
+import java.nio.file.Path;
+
+/**
+ * @author Grégory Van den Borre
+ */
+public class SevenZipArchiver implements Archiver {
+
+    @Override
+    public final void pack(Path file, Path destination) {
+        //FIXME implements.
+    }
 }
