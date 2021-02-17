@@ -27,6 +27,7 @@ package be.yildizgames.common.compression.zip;
 import be.yildizgames.common.compression.CompressionFactory;
 import be.yildizgames.common.compression.Unpacker;
 import be.yildizgames.common.compression.exception.ArchiveException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -36,60 +37,58 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * @author Grégory Van den Borre
  */
-public class ZipUnpackerTest {
+class ZipUnpackerTest {
 
     @Nested
-    public class ExtractFiles {
+    class ExtractFiles {
 
         @Test
-        public void happyFlow() throws IOException {
+        void happyFlow() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
+            Assertions.assertFalse(Files.exists(zip.resolve("zip-folder-1").resolve("zip-file-1.txt")));
             unpacker.unpack(getFile("zip-files.zip"), zip, true);
-            assertTrue(Files.exists(zip.resolve("zip-folder-1").resolve("zip-file-1.txt")));
+            Assertions.assertTrue(Files.exists(zip.resolve("zip-folder-1").resolve("zip-file-1.txt")));
         }
 
         @Test
-        public void ZipFileNotExisting() throws IOException {
+        void ZipFileNotExisting() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
-            assertThrows(ArchiveException.class, () -> unpacker.unpack(Paths.get("anything"), zip, true));
+            Assertions.assertThrows(ArchiveException.class, () -> unpacker.unpack(Paths.get("anything"), zip, true));
         }
 
         @Test
-        public void directoryAlreadyExisting() {
+        void directoryAlreadyExisting() {
 
         }
 
         @Test
-        public void fileAlreadyExisting() throws IOException {
+        void fileAlreadyExisting() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpack(getFile("zip-files.zip"), zip, true);
             unpacker.unpack(getFile("zip-files.zip"), zip, true);
-            assertTrue(Files.exists(zip.resolve("zip-folder-1").resolve("zip-file-1.txt")));
+            Assertions.assertTrue(Files.exists(zip.resolve("zip-folder-1").resolve("zip-file-1.txt")));
         }
     }
 
     @Nested
-    public class UnpackDirectoryToDirectory {
+    class UnpackDirectoryToDirectory {
 
         @Test
-        public void happyFlow() throws IOException {
+        void happyFlow() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpackDirectoryToDirectory(getFile("zip-files.zip"), "zip-folder-1", zip);
-            assertTrue(Files.exists(zip.resolve("zip-folder-1").resolve("zip-file-1.txt")));
+            Assertions. assertTrue(Files.exists(zip.resolve("zip-folder-1").resolve("zip-file-1.txt")));
         }
 
         @Test
-        public void directoryAlreadyExist() throws IOException {
+        void directoryAlreadyExist() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpackDirectoryToDirectory(getFile("zip-files.zip"), "zip-folder-1", zip);
@@ -97,7 +96,7 @@ public class ZipUnpackerTest {
         }
 
         @Test
-        public void directoryNotExistInArchive() throws IOException {
+        void directoryNotExistInArchive() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
             unpacker.unpackDirectoryToDirectory(getFile("zip-files.zip"), "zip-folder-17", zip);
