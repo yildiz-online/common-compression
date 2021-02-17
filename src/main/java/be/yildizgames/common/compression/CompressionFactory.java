@@ -74,4 +74,14 @@ public class CompressionFactory {
         return new SevenZipFileInfoRetriever(path);
     }
 
+    public static FileInfoRetriever fileInfo(Path path) {
+        if(path.toString().endsWith(".7z")) {
+            return new SevenZipFileInfoRetriever(path);
+        } else if (path.toString().endsWith(".zip")) {
+            return new ZipFileInfoRetriever(path);
+        } else {
+            throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+        }
+    }
+
 }
