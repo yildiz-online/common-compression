@@ -12,10 +12,9 @@
 
 package be.yildizgames.common.compression.zip;
 
+import be.yildizgames.common.compression.FileInfo;
 import be.yildizgames.common.compression.FileInfoRetriever;
 import be.yildizgames.common.hashing.Algorithm;
-import be.yildizgames.common.hashing.ComputedHash;
-import be.yildizgames.common.hashing.HashValue;
 import be.yildizgames.common.hashing.HashingFactory;
 
 import java.io.IOException;
@@ -41,20 +40,20 @@ public class ZipFileInfoRetriever implements FileInfoRetriever {
     }
 
     @Override
-    public final List<HashValue> getFileInfo(Algorithm... algorithms) {
+    public final List<FileInfo> getFileInfo(Algorithm... algorithms) {
         if(algorithms == null || algorithms.length == 0) {
             return List.of();
         }
-        var result = new ArrayList<HashValue>();
+        var result = new ArrayList<FileInfo>();
 
         try {
             ZipFile zip = new ZipFile(path.toFile());
             for (Enumeration<? extends ZipEntry> e = zip.entries(); e.hasMoreElements();) {
                 ZipEntry entry = e.nextElement();
-                result.add(new HashValue(entry.getName(), Arrays.stream(algorithms).map(
+                result.add(new FileInfo(entry.getName(), Arrays.stream(algorithms).map(
                             a -> {
                                 try {
-                                    return new ComputedHash(HashingFactory.get(a).compute(zip.getInputStream(entry)), a);
+                                    return HashingFactory.get(a).compute(zip.getInputStream(entry));
                                 } catch (IOException ex) {
                                     throw new IllegalStateException(ex);
                                 }
