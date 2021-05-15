@@ -12,14 +12,33 @@
 
 package be.yildizgames.common.compression;
 
-import be.yildizgames.common.hashing.Algorithm;
+import be.yildizgames.common.hashing.FileHash;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
+ * Contains the information for an entry in a compressed file.
+ *
  * @author Grégory Van den Borre
  */
-public interface FileInfoRetriever {
+public class FileInfo {
 
-    List<FileInfo> getFileInfo(Algorithm... algorithm);
+    private final String name;
+
+    private final List<FileHash> hashes;
+
+    public FileInfo(String name, List<FileHash> hashes) {
+        super();
+        this.name = name;
+        this.hashes = Collections.unmodifiableList(hashes);
+    }
+
+    public final List<FileHash> getHashes() {
+        return this.hashes;
+    }
+
+    public final String getName() {
+        return this.name;
+    }
 }

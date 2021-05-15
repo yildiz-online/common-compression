@@ -40,15 +40,15 @@ class SevenZipFileInfoRetrieverTest {
         boolean found2 = false;
 
         for(var fi : fileInfo) {
-            if(fi.getFileName().equals("test-hash.txt")) {
-                Assertions.assertEquals(crc1, fi.getHash().get(0).getHash());
-                Assertions.assertEquals(md51, fi.getHash().get(1).getHash());
-                Assertions.assertEquals(sha11, fi.getHash().get(2).getHash());
+            if(fi.getName().equals("test-hash.txt")) {
+                Assertions.assertEquals(crc1, fi.getHashes().get(0));
+                Assertions.assertEquals(md51, fi.getHashes().get(1));
+                Assertions.assertEquals(sha11, fi.getHashes().get(2));
                 found1 = true;
-            } else if (fi.getFileName().equals("test-hash2.txt")) {
-                Assertions.assertEquals(crc2, fi.getHash().get(0).getHash());
-                Assertions.assertEquals(md52, fi.getHash().get(1).getHash());
-                Assertions.assertEquals(sha12, fi.getHash().get(2).getHash());
+            } else if (fi.getName().equals("test-hash2.txt")) {
+                Assertions.assertEquals(crc2, fi.getHashes().get(0));
+                Assertions.assertEquals(md52, fi.getHashes().get(1));
+                Assertions.assertEquals(sha12, fi.getHashes().get(2));
                 found2 = true;
             }
         }
@@ -64,8 +64,8 @@ class SevenZipFileInfoRetrieverTest {
 
         var fileInfo = new SevenZipFileInfoRetriever(Path.of("src/test/resources/amaryllis-4701720_1920.7z")).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
 
-        Assertions.assertEquals(crc1, fileInfo.get(0).getHash().get(0).getHash());
-        Assertions.assertEquals(md51, fileInfo.get(0).getHash().get(1).getHash());
-        Assertions.assertEquals(sha11, fileInfo.get(0).getHash().get(2).getHash());
+        Assertions.assertEquals(crc1, fileInfo.get(0).getHashes().get(0));
+        Assertions.assertEquals(md51, fileInfo.get(0).getHashes().get(1));
+        Assertions.assertEquals(sha11, fileInfo.get(0).getHashes().get(2));
     }
 }

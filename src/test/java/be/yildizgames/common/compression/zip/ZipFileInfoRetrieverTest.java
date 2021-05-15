@@ -35,13 +35,13 @@ class ZipFileInfoRetrieverTest {
 
         var fileInfo = new ZipFileInfoRetriever(Path.of("src/test/resources/test-hash.zip")).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
 
-        Assertions.assertEquals(crc1, fileInfo.get(0).getHash().get(0).getHash());
-        Assertions.assertEquals(md51, fileInfo.get(0).getHash().get(1).getHash());
-        Assertions.assertEquals(sha11, fileInfo.get(0).getHash().get(2).getHash());
+        Assertions.assertEquals(crc1, fileInfo.get(0).getHashes().get(0));
+        Assertions.assertEquals(md51, fileInfo.get(0).getHashes().get(1));
+        Assertions.assertEquals(sha11, fileInfo.get(0).getHashes().get(2));
 
-        Assertions.assertEquals(crc2, fileInfo.get(1).getHash().get(0).getHash());
-        Assertions.assertEquals(md52, fileInfo.get(1).getHash().get(1).getHash());
-        Assertions.assertEquals(sha12, fileInfo.get(1).getHash().get(2).getHash());
+        Assertions.assertEquals(crc2, fileInfo.get(1).getHashes().get(0));
+        Assertions.assertEquals(md52, fileInfo.get(1).getHashes().get(1));
+        Assertions.assertEquals(sha12, fileInfo.get(1).getHashes().get(2));
     }
 
     @Test
@@ -52,8 +52,8 @@ class ZipFileInfoRetrieverTest {
 
         var fileInfo = new ZipFileInfoRetriever(Path.of("src/test/resources/amaryllis-4701720_1920.zip")).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
 
-        Assertions.assertEquals(crc1, fileInfo.get(0).getHash().get(0).getHash());
-        Assertions.assertEquals(md51, fileInfo.get(0).getHash().get(1).getHash());
-        Assertions.assertEquals(sha11, fileInfo.get(0).getHash().get(2).getHash());
+        Assertions.assertEquals(crc1, fileInfo.get(0).getHashes().get(0));
+        Assertions.assertEquals(md51, fileInfo.get(0).getHashes().get(1));
+        Assertions.assertEquals(sha11, fileInfo.get(0).getHashes().get(2));
     }
 }

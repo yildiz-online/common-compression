@@ -12,10 +12,10 @@
 
 package be.yildizgames.common.compression.sevenzip;
 
+import be.yildizgames.common.compression.FileInfo;
 import be.yildizgames.common.compression.FileInfoRetriever;
 import be.yildizgames.common.hashing.Algorithm;
-import be.yildizgames.common.hashing.ComputedHash;
-import be.yildizgames.common.hashing.HashValue;
+import be.yildizgames.common.hashing.FileHash;
 import be.yildizgames.common.hashing.HashingFactory;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
@@ -39,19 +39,19 @@ public class SevenZipFileInfoRetriever implements FileInfoRetriever {
     }
 
     @Override
-    public final List<HashValue> getFileInfo(Algorithm... algorithms) {
+    public final List<FileInfo> getFileInfo(Algorithm... algorithms) {
         if (algorithms == null || algorithms.length == 0) {
             return List.of();
         }
-        var result = new ArrayList<HashValue>();
-        Map<String, List<ComputedHash>> hashes = new HashMap<>();
+        var result = new ArrayList<FileInfo>();
+        Map<String, List<FileHash>> hashes = new HashMap<>();
 
         for (var a : algorithms) {
             try (var sevenZFile = new SevenZFile(this.path.toFile())) {
                 for (var e : sevenZFile.getEntries()) {
                     if (!e.isDirectory()) {
                         var is = sevenZFile.getInputStream(e);
-                        var hash = new ComputedHash(HashingFactory.get(a).compute(is, (int) e.getSize()), a);
+                        var hash = HashingFactory.get(a).compute(is, (int) e.getSize());
                         if(!hashes.containsKey(e.getName())) {
                              hashes.put(e.getName(), new ArrayList<>());
                         }
@@ -63,7 +63,7 @@ public class SevenZipFileInfoRetriever implements FileInfoRetriever {
         }
     }
         for(var entry : hashes.entrySet()) {
-            result.add(new HashValue(entry.getKey(), entry.getValue()));
+            result.add(new FileInfo(entry.getKey(), entry.getValue()));
         }
         return result;
     }
