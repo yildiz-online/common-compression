@@ -25,16 +25,49 @@
 package be.yildizgames.common.compression.sevenzip;
 
 import be.yildizgames.common.compression.Archiver;
+import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
+ * This class is able to compress into the 7zip archive format.
+ *
  * @author Grégory Van den Borre
  */
 public class SevenZipArchiver implements Archiver {
 
     @Override
     public final void pack(Path file, Path destination) {
-        //FIXME implements.
+        try (SevenZOutputFile out = new SevenZOutputFile(destination.toFile())) {
+            addToArchiveCompression(out, file, "");
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static void addToArchiveCompression(SevenZOutputFile out, Path file, String dir) {
+        var name = dir + "/" + file.getFileName().toString();
+        try {
+            if (Files.isRegularFile(file)) {
+                var entry = out.createArchiveEntry(file, name);
+                out.putArchiveEntry(entry);
+                try (var in = Files.newInputStream(file)) {
+                    var b = new byte[1024];
+                    int count;
+                    while ((count = in.read(b)) > 0) {
+                        out.write(b, 0, count);
+                    }
+                    out.closeArchiveEntry();
+                }
+            } else if (Files.isDirectory(file)) {
+                try (var files = Files.list(file)) {
+                    files.forEach(f -> addToArchiveCompression(out, f, name));
+                }
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
