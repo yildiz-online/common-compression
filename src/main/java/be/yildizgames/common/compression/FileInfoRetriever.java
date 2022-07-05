@@ -33,5 +33,11 @@ import java.util.List;
  */
 public interface FileInfoRetriever {
 
+    /**
+     * Provide a list of FileInfo for the archive.
+     *
+     * @param algorithm List of algorithm to compute the FileInfo hashes, can be null or empty.
+     * @return The computed list of FileInfo.
+     */
     List<FileInfo> getFileInfo(Algorithm... algorithm);
 }

@@ -5,12 +5,14 @@ The common compression library is a set of utility and helper classes to handle 
 
 ## Features
 
-* Zip decompression.
+* Zip compression and decompression.
+* 7z compression and decompression.
+* Archive file info list(hashes).
 * ...
 
 ## Requirements
 
-To build this module, you will need a java 9 JDK and Maven 3.
+To build this module, you will need a java 17 JDK and Maven 3.
 
 ## Coding Style and other information
 

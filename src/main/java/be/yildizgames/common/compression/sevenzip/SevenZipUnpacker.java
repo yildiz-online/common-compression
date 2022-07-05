@@ -25,7 +25,6 @@
 package be.yildizgames.common.compression.sevenzip;
 
 import be.yildizgames.common.compression.Unpacker;
-import be.yildizgames.common.compression.exception.ArchiveException;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
@@ -34,6 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
+ * This class is able to unpack files from the 7zip archive format.
+ *
  * @author Grégory Van den Borre
  */
 public class SevenZipUnpacker implements Unpacker {
@@ -41,27 +42,31 @@ public class SevenZipUnpacker implements Unpacker {
     @Override
     public final void unpack(Path archive, Path destination, boolean keepRootDir) {
         try (var sevenZFile = new SevenZFile(archive.toFile())) {
-            if(Files.notExists(destination)) {
+            if (Files.notExists(destination)) {
                 Files.createDirectories(destination);
             }
             SevenZArchiveEntry entry = sevenZFile.getNextEntry();
             while (entry != null) {
-                if(entry.isDirectory()) {
-                    if(Files.notExists(destination.resolve(entry.getName()))) {
+                if (entry.isDirectory()) {
+                    if (Files.notExists(destination.resolve(entry.getName()))) {
                         Files.createDirectories(destination.resolve(entry.getName()));
                     }
                 } else {
-                    try (var out = Files.newOutputStream(destination.resolve(entry.getName()))) {
-                        byte[] content = new byte[(int) entry.getSize()];
-                        sevenZFile.read(content, 0, content.length);
-                        out.write(content);
-                    } catch (final IOException ioe) {
-                        throw new IllegalStateException(ioe);
-                    }
+                    unpackEntry(destination, sevenZFile, entry);
                 }
                 entry = sevenZFile.getNextEntry();
             }
         } catch (IOException ioe) {
+            throw new IllegalStateException(ioe);
+        }
+    }
+
+    private void unpackEntry(Path destination, SevenZFile sevenZFile, SevenZArchiveEntry entry) {
+        try (var out = Files.newOutputStream(destination.resolve(entry.getName()))) {
+            byte[] content = new byte[(int) entry.getSize()];
+            sevenZFile.read(content, 0, content.length);
+            out.write(content);
+        } catch (final IOException ioe) {
             throw new IllegalStateException(ioe);
         }
     }

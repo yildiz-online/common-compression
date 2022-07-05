@@ -51,23 +51,27 @@ public class ZipArchiver implements Archiver {
 
     private void zipDirectory(File folder, String parentFolder,
                               ZipOutputStream zos) throws IOException {
-        for (File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                zipDirectory(file, parentFolder + "/" + file.getName(), zos);
-                continue;
+        var files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    zipDirectory(file, parentFolder + "/" + file.getName(), zos);
+                    continue;
+                }
+                doZip(parentFolder + "/" + file.getName(), file, zos);
             }
-            doZip(parentFolder + "/" + file.getName(), file, zos);
         }
+
     }
 
     private void doZip(String name, File file, ZipOutputStream zos) throws IOException {
         zos.putNextEntry(new ZipEntry(name));
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(
-                file));
-        byte[] bytesIn = new byte[4096];
-        int read;
-        while ((read = bis.read(bytesIn)) != -1) {
-            zos.write(bytesIn, 0, read);
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+            byte[] bytesIn = new byte[4096];
+            int read;
+            while ((read = bis.read(bytesIn)) != -1) {
+                zos.write(bytesIn, 0, read);
+            }
         }
         zos.closeEntry();
     }
