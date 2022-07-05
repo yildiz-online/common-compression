@@ -25,7 +25,6 @@
 package be.yildizgames.common.compression.zip;
 
 import be.yildizgames.common.compression.Unpacker;
-import be.yildizgames.common.compression.exception.ArchiveException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +78,7 @@ public class ZipUnpacker implements Unpacker {
                 }
             }
         } catch (IOException ioe) {
-            throw new ArchiveException(ioe);
+            throw new IllegalStateException(ioe);
         }
     }
 
@@ -103,7 +102,7 @@ public class ZipUnpacker implements Unpacker {
                 }
             }
         } catch (IOException ioe) {
-            throw new ArchiveException("Error unpacking" + archive.toString() + ":" + destination.toString(),ioe);
+            throw new IllegalStateException("Error unpacking" + archive.toString() + ":" + destination.toString(), ioe);
         }
     }
 

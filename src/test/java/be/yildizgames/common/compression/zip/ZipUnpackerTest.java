@@ -26,7 +26,6 @@ package be.yildizgames.common.compression.zip;
 
 import be.yildizgames.common.compression.CompressionFactory;
 import be.yildizgames.common.compression.Unpacker;
-import be.yildizgames.common.compression.exception.ArchiveException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,7 @@ class ZipUnpackerTest {
         void ZipFileNotExisting() throws IOException {
             Unpacker unpacker = CompressionFactory.zipUnpacker();
             Path zip = getDestinationPath();
-            Assertions.assertThrows(ArchiveException.class, () -> unpacker.unpack(Paths.get("anything"), zip, true));
+            Assertions.assertThrows(IllegalStateException.class, () -> unpacker.unpack(Paths.get("anything"), zip, true));
         }
 
         @Test

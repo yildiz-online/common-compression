@@ -24,8 +24,6 @@
 
 package be.yildizgames.common.compression;
 
-import be.yildizgames.common.compression.exception.ArchiveException;
-
 import java.nio.file.Path;
 
 /**
@@ -41,17 +39,17 @@ public interface Unpacker {
      * @param archive     Zip file to extract the data from.
      * @param destination Path where the directory will be extracted.
      * @param keepRootDir Keep the root directory or extract all its content.
-     * @throws ArchiveException If the archive file does not exists.
+     * @throws IllegalStateException If the archive file does not exists.
      */
     void unpack(Path archive, Path destination, boolean keepRootDir);
 
     /**
      * Extract a directory and all its content from an archive file.
      *
-     * @param archive     Archive file to extract the data from.
-     * @param directoryToExtract   Directory to extract.
-     * @param destination Path where the directory will be extracted.
-     * @throws ArchiveException If the archive file does not exists.
+     * @param archive            Archive file to extract the data from.
+     * @param directoryToExtract Directory to extract.
+     * @param destination        Path where the directory will be extracted.
+     * @throws IllegalStateException If the archive file does not exists.
      */
     void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination);
 }

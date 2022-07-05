@@ -56,13 +56,13 @@ public class SevenZipUnpacker implements Unpacker {
                         sevenZFile.read(content, 0, content.length);
                         out.write(content);
                     } catch (final IOException ioe) {
-                        throw new ArchiveException(ioe);
+                        throw new IllegalStateException(ioe);
                     }
                 }
                 entry = sevenZFile.getNextEntry();
             }
         } catch (IOException ioe) {
-            throw new ArchiveException(ioe);
+            throw new IllegalStateException(ioe);
         }
     }
 
