@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -53,24 +52,22 @@ public class ZipFileInfoRetriever implements FileInfoRetriever {
 
     @Override
     public final List<FileInfo> getFileInfo(Algorithm... algorithms) {
-        if(algorithms == null || algorithms.length == 0) {
-            return List.of();
+        if (algorithms == null) {
+            algorithms = new Algorithm[0];
         }
         var result = new ArrayList<FileInfo>();
-
-        try {
-            ZipFile zip = new ZipFile(path.toFile());
-            for (Enumeration<? extends ZipEntry> e = zip.entries(); e.hasMoreElements();) {
+        try (ZipFile zip = new ZipFile(path.toFile())) {
+            for (Enumeration<? extends ZipEntry> e = zip.entries(); e.hasMoreElements(); ) {
                 ZipEntry entry = e.nextElement();
                 result.add(new FileInfo(entry.getName(), Arrays.stream(algorithms).map(
-                            a -> {
-                                try {
-                                    return HashingFactory.get(a).compute(zip.getInputStream(entry));
-                                } catch (IOException ex) {
-                                    throw new IllegalStateException(ex);
-                                }
+                        a -> {
+                            try {
+                                return HashingFactory.get(a).compute(zip.getInputStream(entry));
+                            } catch (IOException ex) {
+                                throw new IllegalStateException(ex);
                             }
-                ).collect(Collectors.toList())));
+                        }
+                ).toList()));
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);

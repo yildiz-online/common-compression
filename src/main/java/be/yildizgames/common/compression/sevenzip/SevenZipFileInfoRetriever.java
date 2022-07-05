@@ -37,24 +37,53 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
+ * This class will provide the file infos from a 7zip archive.
+ *
  * @author Grégory Van den Borre
  */
 public class SevenZipFileInfoRetriever implements FileInfoRetriever {
 
+    /**
+     * Path of the archive, never null.
+     */
     private final Path path;
 
-    public SevenZipFileInfoRetriever(Path path) {
+    /**
+     * Construct a new instance.
+     *
+     * @param path Path of the archive, cannot be null.
+     */
+    public SevenZipFileInfoRetriever(final Path path) {
         super();
-        this.path = path;
+        this.path = Objects.requireNonNull(path);
     }
 
     @Override
     public final List<FileInfo> getFileInfo(Algorithm... algorithms) {
         if (algorithms == null || algorithms.length == 0) {
-            return List.of();
+            return noCompute();
         }
+        return computeHashes(algorithms);
+    }
+
+    private List<FileInfo> noCompute() {
+        var result = new ArrayList<FileInfo>();
+        try (var sevenZFile = new SevenZFile(this.path.toFile())) {
+            for (var e : sevenZFile.getEntries()) {
+                if (!e.isDirectory()) {
+                    result.add(new FileInfo(e.getName(), List.of()));
+                }
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return result;
+    }
+
+    private List<FileInfo> computeHashes(Algorithm... algorithms) {
         var result = new ArrayList<FileInfo>();
         Map<String, List<FileHash>> hashes = new HashMap<>();
 
