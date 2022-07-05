@@ -38,12 +38,6 @@ import java.nio.file.Path;
  */
 public class SevenZipUnpacker implements Unpacker {
 
-    /**
-     * Size of the buffer to use.
-     */
-    private static final int BUFFER_SIZE = 1024;
-
-
     @Override
     public final void unpack(Path archive, Path destination, boolean keepRootDir) {
         try (var sevenZFile = new SevenZFile(archive.toFile())) {
