@@ -52,16 +52,16 @@ public class SevenZipFileInfoRetriever implements FileInfoRetriever {
                     if (!e.isDirectory()) {
                         var is = sevenZFile.getInputStream(e);
                         var hash = HashingFactory.get(a).compute(is, (int) e.getSize());
-                        if(!hashes.containsKey(e.getName())) {
-                             hashes.put(e.getName(), new ArrayList<>());
+                        if (!hashes.containsKey(e.getName())) {
+                            hashes.put(e.getName(), new ArrayList<>());
                         }
                         hashes.get(e.getName()).add(hash);
                     }
                 }
-        } catch(IOException ioe){
-            ioe.printStackTrace();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
-    }
         for(var entry : hashes.entrySet()) {
             result.add(new FileInfo(entry.getKey(), entry.getValue()));
         }
