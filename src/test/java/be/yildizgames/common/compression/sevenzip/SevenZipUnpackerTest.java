@@ -27,7 +27,7 @@ import java.nio.file.Path;
 /**
  * @author Grégory Van den Borre
  */
-public class SevenZipUnpackerTest {
+class SevenZipUnpackerTest {
 
     @Nested
     class ExtractFiles {
