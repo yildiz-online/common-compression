@@ -34,23 +34,10 @@ import java.util.List;
  *
  * @author Grégory Van den Borre
  */
-public class FileInfo {
-
-    private final String name;
-
-    private final List<FileHash> hashes;
+public record FileInfo(String name, List<FileHash> hashes) {
 
     public FileInfo(String name, List<FileHash> hashes) {
-        super();
         this.name = name;
         this.hashes = Collections.unmodifiableList(hashes);
-    }
-
-    public final List<FileHash> getHashes() {
-        return this.hashes;
-    }
-
-    public final String getName() {
-        return this.name;
     }
 }
