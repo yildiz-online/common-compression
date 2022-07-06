@@ -102,7 +102,7 @@ public class ZipUnpacker implements Unpacker {
                 }
             }
         } catch (IOException ioe) {
-            throw new IllegalStateException("Error unpacking" + archive.toString() + ":" + destination.toString(), ioe);
+            throw new IllegalStateException("Error unpacking" + archive + ":" + destination, ioe);
         }
     }
 
