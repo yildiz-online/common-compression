@@ -24,10 +24,17 @@
 
 package be.yildizgames.common.compression;
 
+import be.yildizgames.common.compression.sevenzip.SevenZipArchiver;
+import be.yildizgames.common.compression.sevenzip.SevenZipFileInfoRetriever;
+import be.yildizgames.common.compression.sevenzip.SevenZipUnpacker;
 import be.yildizgames.common.compression.zip.ZipArchiver;
+import be.yildizgames.common.compression.zip.ZipFileInfoRetriever;
 import be.yildizgames.common.compression.zip.ZipUnpacker;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -35,13 +42,105 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class CompressionFactoryTest {
 
-    @Test
-    void zipUnpacker() {
-        assertTrue(CompressionFactory.zipUnpacker() instanceof ZipUnpacker);
+    @Nested
+    class ZipUnpackerGet {
+
+        @Test
+        void correctClass() {
+            assertTrue(CompressionFactory.zipUnpacker() instanceof ZipUnpacker);
+        }
+
+        @Test
+        void sameInstance() {
+            assertSame(CompressionFactory.zipUnpacker(), CompressionFactory.zipUnpacker());
+        }
+
     }
 
-    @Test
-    void zipArchiver() {
-        assertTrue(CompressionFactory.zipArchiver() instanceof ZipArchiver);
+    @Nested
+    class SevenZipUnpackerGet {
+
+        @Test
+        void correctClass() {
+            assertTrue(CompressionFactory.sevenZipUnpacker() instanceof SevenZipUnpacker);
+        }
+
+        @Test
+        void sameInstance() {
+            assertSame(CompressionFactory.sevenZipUnpacker(), CompressionFactory.sevenZipUnpacker());
+        }
+
     }
+
+    @Nested
+    class ZipArchiverGet {
+
+        @Test
+        void correctClass() {
+            assertTrue(CompressionFactory.zipArchiver() instanceof ZipArchiver);
+        }
+
+        @Test
+        void sameInstance() {
+            assertSame(CompressionFactory.zipUnpacker(), CompressionFactory.zipUnpacker());
+        }
+
+    }
+
+    @Nested
+    class SevenZipArchiverGet {
+
+        @Test
+        void correctClass() {
+            assertTrue(CompressionFactory.sevenZipArchiver() instanceof SevenZipArchiver);
+        }
+
+        @Test
+        void sameInstance() {
+            assertSame(CompressionFactory.sevenZipArchiver(), CompressionFactory.sevenZipArchiver());
+        }
+
+    }
+
+    @Nested
+    class ZipFileInfoGet {
+
+        @Test
+        void correctClass() {
+            Assertions.assertTrue(CompressionFactory.zipFileInfo(Helper.getZipTestHashFile()) instanceof ZipFileInfoRetriever);
+        }
+
+    }
+
+    @Nested
+    class SevenZipFileInfoGet {
+
+        @Test
+        void correctClass() {
+            Assertions.assertTrue(CompressionFactory.sevenZipFileInfo(Helper.get7zTestHashFile()) instanceof SevenZipFileInfoRetriever);
+        }
+
+    }
+
+    @Nested
+    class FileInfoGet {
+
+        @Test
+        void correctClassZip() {
+            Assertions.assertTrue(CompressionFactory.fileInfo(Helper.getZipTestHashFile()) instanceof ZipFileInfoRetriever);
+        }
+
+        @Test
+        void correctClass7Zip() {
+            Assertions.assertTrue(CompressionFactory.fileInfo(Helper.get7zMultipleFiles()) instanceof SevenZipFileInfoRetriever);
+        }
+
+        @Test
+        void wrongExtension() {
+            var file = Helper.getPlainTestHashFile();
+            Assertions.assertThrows(IllegalArgumentException.class, () -> CompressionFactory.fileInfo(file));
+        }
+
+    }
+
 }

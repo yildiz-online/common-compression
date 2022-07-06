@@ -24,12 +24,11 @@
 
 package be.yildizgames.common.compression.zip;
 
+import be.yildizgames.common.compression.Helper;
 import be.yildizgames.common.hashing.Algorithm;
 import be.yildizgames.common.hashing.HashingFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
 
 /**
  * @author Grégory Van den Borre
@@ -38,14 +37,14 @@ class ZipFileInfoRetrieverTest {
 
     @Test
     void testHash() {
-        var crc1 = HashingFactory.get(Algorithm.CRC32).compute(Path.of("src/test/resources/test-hash.txt"));
-        var crc2 = HashingFactory.get(Algorithm.CRC32).compute(Path.of("src/test/resources/test-hash2.txt"));
-        var md51 = HashingFactory.get(Algorithm.MD5).compute(Path.of("src/test/resources/test-hash.txt"));
-        var md52 = HashingFactory.get(Algorithm.MD5).compute(Path.of("src/test/resources/test-hash2.txt"));
-        var sha11 = HashingFactory.get(Algorithm.SHA1).compute(Path.of("src/test/resources/test-hash.txt"));
-        var sha12 = HashingFactory.get(Algorithm.SHA1).compute(Path.of("src/test/resources/test-hash2.txt"));
+        var crc1 = HashingFactory.get(Algorithm.CRC32).compute(Helper.getPlainTestHashFile());
+        var crc2 = HashingFactory.get(Algorithm.CRC32).compute(Helper.getPlainTestHash2File());
+        var md51 = HashingFactory.get(Algorithm.MD5).compute(Helper.getPlainTestHashFile());
+        var md52 = HashingFactory.get(Algorithm.MD5).compute(Helper.getPlainTestHash2File());
+        var sha11 = HashingFactory.get(Algorithm.SHA1).compute(Helper.getPlainTestHashFile());
+        var sha12 = HashingFactory.get(Algorithm.SHA1).compute(Helper.getPlainTestHash2File());
 
-        var fileInfo = new ZipFileInfoRetriever(Path.of("src/test/resources/test-hash.zip")).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
+        var fileInfo = new ZipFileInfoRetriever(Helper.getZipTestHashFile()).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
 
         Assertions.assertEquals(crc1, fileInfo.get(0).hashes().get(0));
         Assertions.assertEquals(md51, fileInfo.get(0).hashes().get(1));
@@ -58,11 +57,11 @@ class ZipFileInfoRetrieverTest {
 
     @Test
     void testHashBigFile() {
-        var crc1 = HashingFactory.get(Algorithm.CRC32).compute(Path.of("src/test/resources/amaryllis-4701720_1920.jpg"));
-        var md51 = HashingFactory.get(Algorithm.MD5).compute(Path.of("src/test/resources/amaryllis-4701720_1920.jpg"));
-        var sha11 = HashingFactory.get(Algorithm.SHA1).compute(Path.of("src/test/resources/amaryllis-4701720_1920.jpg"));
+        var crc1 = HashingFactory.get(Algorithm.CRC32).compute(Helper.getPlainBigFile());
+        var md51 = HashingFactory.get(Algorithm.MD5).compute(Helper.getPlainBigFile());
+        var sha11 = HashingFactory.get(Algorithm.SHA1).compute(Helper.getPlainBigFile());
 
-        var fileInfo = new ZipFileInfoRetriever(Path.of("src/test/resources/amaryllis-4701720_1920.zip")).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
+        var fileInfo = new ZipFileInfoRetriever(Helper.getZipBigFile()).getFileInfo(Algorithm.CRC32, Algorithm.MD5, Algorithm.SHA1);
 
         Assertions.assertEquals(crc1, fileInfo.get(0).hashes().get(0));
         Assertions.assertEquals(md51, fileInfo.get(0).hashes().get(1));

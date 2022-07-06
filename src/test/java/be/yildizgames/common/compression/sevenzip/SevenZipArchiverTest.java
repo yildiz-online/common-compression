@@ -24,13 +24,11 @@
 
 package be.yildizgames.common.compression.sevenzip;
 
+import be.yildizgames.common.compression.Helper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * @author Grégory Van den Borre
@@ -41,10 +39,10 @@ class SevenZipArchiverTest {
     class Pack {
 
         @Test
-        void singleFile() throws IOException {
+        void singleFile() throws Exception {
             var result = Files.createTempFile("", ".7z");
             var archiver = new SevenZipArchiver();
-            archiver.pack(getFile("test-hash.txt"), result);
+            archiver.pack(Helper.getPlainTestHashFile(), result);
         }
 
         @Test
@@ -61,9 +59,5 @@ class SevenZipArchiverTest {
         void nonExistingDestination() {
 
         }
-    }
-
-    private static Path getFile(String name) {
-        return new File(SevenZipArchiverTest.class.getClassLoader().getResource(name).getFile()).getAbsoluteFile().toPath();
     }
 }

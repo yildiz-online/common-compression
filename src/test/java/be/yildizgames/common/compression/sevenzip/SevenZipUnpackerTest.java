@@ -25,14 +25,12 @@
 package be.yildizgames.common.compression.sevenzip;
 
 import be.yildizgames.common.compression.CompressionFactory;
+import be.yildizgames.common.compression.Helper;
 import be.yildizgames.common.compression.Unpacker;
-import be.yildizgames.common.compression.zip.ZipUnpacker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -45,20 +43,16 @@ class SevenZipUnpackerTest {
     class ExtractFiles {
 
         @Test
-        void happyFlow() throws IOException {
+        void happyFlow() throws Exception {
             Unpacker unpacker = CompressionFactory.sevenZipUnpacker();
             Path zip = getDestinationPath();
             Assertions.assertFalse(Files.exists(zip.resolve("7zip-folder-1").resolve("7zip-file-1.txt")));
-            unpacker.unpack(getFile("7zip-files.7z"), zip, true);
+            unpacker.unpack(Helper.get7zMultipleFiles(), zip, true);
             Assertions.assertTrue(Files.exists(zip.resolve("7zip-folder-1").resolve("7zip-file-1.txt")));
         }
     }
 
-    private static Path getFile(String name) {
-        return new File(SevenZipUnpacker.class.getClassLoader().getResource(name).getFile()).getAbsoluteFile().toPath();
-    }
-
-    private static Path getDestinationPath() throws IOException {
+    private static Path getDestinationPath() throws Exception {
         return Files.createTempDirectory("sevenzip");
     }
 }
