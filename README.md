@@ -35,7 +35,7 @@ All source code files are licensed under the permissive MIT license
 
 ## Build instructions
 
-Go to your root directory, where you POM file is located.
+Go to your root directory, where your POM file is located.
 
 Then invoke maven
 

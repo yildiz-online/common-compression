@@ -39,7 +39,7 @@ public interface Unpacker {
      * @param archive     Zip file to extract the data from.
      * @param destination Path where the directory will be extracted.
      * @param keepRootDir Keep the root directory or extract all its content.
-     * @throws IllegalStateException If the archive file does not exists.
+     * @throws IllegalStateException If the archive file does not exist.
      */
     void unpack(Path archive, Path destination, boolean keepRootDir);
 
@@ -49,7 +49,7 @@ public interface Unpacker {
      * @param archive            Archive file to extract the data from.
      * @param directoryToExtract Directory to extract.
      * @param destination        Path where the directory will be extracted.
-     * @throws IllegalStateException If the archive file does not exists.
+     * @throws IllegalStateException If the archive file does not exist.
      */
     void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination);
 }

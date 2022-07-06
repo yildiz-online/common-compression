@@ -1,1 +1,1 @@
-a second file file for hash to be tested.
+a second file for hash to be tested.
