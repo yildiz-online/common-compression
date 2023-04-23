@@ -43,6 +43,8 @@ public interface Unpacker {
      */
     void unpack(Path archive, Path destination, boolean keepRootDir);
 
+    void unpack(Path archive, String fileToExtract, Path destination);
+
     /**
      * Extract a directory and all its content from an archive file.
      *

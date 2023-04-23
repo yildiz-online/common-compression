@@ -15,15 +15,19 @@
 
 package be.yildizgames.common.compression;
 
+import be.yildizgames.common.compression.filetype.FileTypeCategories;
+import be.yildizgames.common.compression.filetype.FileTypes;
 import be.yildizgames.common.compression.sevenzip.SevenZipArchiver;
-import be.yildizgames.common.compression.sevenzip.SevenZipNativeArchiver;
 import be.yildizgames.common.compression.sevenzip.SevenZipFileInfoRetriever;
+import be.yildizgames.common.compression.sevenzip.SevenZipNativeArchiver;
 import be.yildizgames.common.compression.sevenzip.SevenZipNativeUnpacker;
 import be.yildizgames.common.compression.sevenzip.SevenZipUnpacker;
 import be.yildizgames.common.compression.zip.ZipArchiver;
 import be.yildizgames.common.compression.zip.ZipFileInfoRetriever;
 import be.yildizgames.common.compression.zip.ZipUnpacker;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -71,44 +75,61 @@ public class CompressionFactory {
         return SEVENZIP_ARCHIVER;
     }
 
-    public static Archiver archiver(Path path) {
-        if(path.toString().endsWith(".7z")) {
-            return sevenZipArchiver(false);
-        } else if (path.toString().endsWith(".zip")) {
-            return zipArchiver();
-        } else {
-            throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+    public static boolean isArchive(Path path) {
+        try {
+            return FileTypeCategories.ARCHIVES.is(Files.newInputStream(path)).isPresent();
+        } catch (IOException e) {
+            System.getLogger(CompressionFactory.class.getName()).log(System.Logger.Level.ERROR, "", e);
         }
+        return false;
+    }
+
+    private static FileTypes getType(Path path) {
+        try (var stream = Files.newInputStream(path)) {
+            int length = 10;
+            byte[] buffer = new byte[length];
+            stream.read(buffer, 0, length);
+            if(FileTypes.SEVEN_ZIP.getType().is(buffer)) {
+                return FileTypes.SEVEN_ZIP;
+            } else if (FileTypes.ZIP.getType().is(buffer)) {
+                return FileTypes.ZIP;
+            }
+        } catch (IOException e) {
+            System.getLogger(CompressionFactory.class.getName()).log(System.Logger.Level.ERROR, "", e);
+        }
+        return FileTypes.UNKNOWN;
+    }
+
+    public static Archiver archiver(Path path) {
+        return switch (getType(path)) {
+            case SEVEN_ZIP -> sevenZipArchiver(false);
+            case ZIP -> zipArchiver();
+            default -> throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+        };
     }
 
     public static Unpacker unpacker(Path path) {
-        if(path.toString().endsWith(".7z")) {
-            return sevenZipUnpacker(false);
-        } else if (path.toString().endsWith(".zip")) {
-            return zipUnpacker();
-        } else {
-            throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
-        }
+        return switch (getType(path)) {
+            case SEVEN_ZIP -> sevenZipUnpacker(false);
+            case ZIP -> zipUnpacker();
+            default -> throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+        };
     }
 
     public static Unpacker nativeUnpacker(Path path) {
-        if(path.toString().endsWith(".7z")) {
-            return sevenZipUnpacker(true);
-        } else if (path.toString().endsWith(".zip")) {
-            return zipUnpacker();
-        } else {
-            throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
-        }
+        return switch (getType(path)) {
+            case SEVEN_ZIP -> sevenZipUnpacker(true);
+            case ZIP -> zipUnpacker();
+            default -> throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+        };
     }
 
     public static Archiver nativeArchiver(Path path) {
-        if(path.toString().endsWith(".7z")) {
-            return sevenZipArchiver(true);
-        } else if (path.toString().endsWith(".zip")) {
-            return zipArchiver();
-        } else {
-            throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
-        }
+        return switch (getType(path)) {
+            case SEVEN_ZIP -> sevenZipArchiver(true);
+            case ZIP -> zipArchiver();
+            default -> throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+        };
     }
 
     public static FileInfoRetriever sevenZipFileInfo(Path path) {
@@ -116,13 +137,11 @@ public class CompressionFactory {
     }
 
     public static FileInfoRetriever fileInfo(Path path) {
-        if(path.toString().endsWith(".7z")) {
-            return new SevenZipFileInfoRetriever(path);
-        } else if (path.toString().endsWith(".zip")) {
-            return new ZipFileInfoRetriever(path);
-        } else {
-            throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
-        }
+        return switch (getType(path)) {
+            case SEVEN_ZIP -> new SevenZipFileInfoRetriever(path);
+            case ZIP -> new ZipFileInfoRetriever(path);
+            default -> throw new IllegalArgumentException("Unknown extension for file: " + path.getFileName().toString());
+        };
     }
 
 }

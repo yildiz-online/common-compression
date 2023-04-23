@@ -61,6 +61,24 @@ public class SevenZipUnpacker implements Unpacker {
         }
     }
 
+    @Override
+    public void unpack(Path archive, String fileToExtract, Path destination) {
+        try (var sevenZFile = new SevenZFile(archive.toFile())) {
+            if (Files.notExists(destination)) {
+                Files.createDirectories(destination);
+            }
+            SevenZArchiveEntry entry = sevenZFile.getNextEntry();
+            while (entry != null) {
+                if (entry.getName().equals(fileToExtract)) {
+                    unpackEntry(destination, sevenZFile, entry);
+                }
+                entry = sevenZFile.getNextEntry();
+            }
+        } catch (IOException ioe) {
+            throw new IllegalStateException(ioe);
+        }
+    }
+
     private void unpackEntry(Path destination, SevenZFile sevenZFile, SevenZArchiveEntry entry) {
         try (var out = Files.newOutputStream(destination.resolve(entry.getName()))) {
             byte[] content = new byte[(int) entry.getSize()];
@@ -73,6 +91,6 @@ public class SevenZipUnpacker implements Unpacker {
 
     @Override
     public final void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
-
+        throw new UnsupportedOperationException();
     }
 }

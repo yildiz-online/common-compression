@@ -83,6 +83,11 @@ public class ZipUnpacker implements Unpacker {
     }
 
     @Override
+    public final void unpack(Path archive, String fileToExtract, Path destination) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public final void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
         try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
             Files.createDirectories(destination);

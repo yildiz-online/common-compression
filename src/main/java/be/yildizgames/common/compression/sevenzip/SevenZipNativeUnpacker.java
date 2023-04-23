@@ -45,7 +45,8 @@ public class SevenZipNativeUnpacker extends SevenZipNative implements Unpacker {
         super();
     }
 
-    public void unpack(Path archive, Path outputDirectory, boolean keepRootDir) {
+    @Override
+    public final void unpack(Path archive, Path outputDirectory, boolean keepRootDir) {
         init();
         try (
                 var randomAccessFile = new RandomAccessFile(archive.toAbsolutePath().toString(), "r");
@@ -60,8 +61,13 @@ public class SevenZipNativeUnpacker extends SevenZipNative implements Unpacker {
     }
 
     @Override
-    public void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
+    public final void unpack(Path archive, String fileToExtract, Path destination) {
+        throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public final void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
+        throw new UnsupportedOperationException();
     }
 
     private record UnPackCallback(IInArchive inArchive, Path outputDirectory) implements IArchiveExtractCallback {

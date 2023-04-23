@@ -60,7 +60,7 @@ public class SevenZipNativeArchiver extends SevenZipNative implements Archiver {
 
     @Override
     public void pack(List<Path> files, Path destination) {
-        doPack(files.stream().map(p -> fromFile(p, "")).toList(), destination);
+        throw new UnsupportedOperationException();
     }
 
     private static Entry fromFile(Path path, String root) {

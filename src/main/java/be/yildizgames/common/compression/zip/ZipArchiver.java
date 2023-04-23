@@ -47,11 +47,7 @@ public class ZipArchiver implements Archiver {
 
     @Override
     public final void pack(List<Path> file, Path destination) {
-        try(var zos = new ZipOutputStream(Files.newOutputStream(destination))) {
-          //  zipDirectory(file.toFile(), file.toFile().getName(), zos);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+        throw new UnsupportedOperationException();
     }
 
     private void zipDirectory(File folder, String parentFolder,
