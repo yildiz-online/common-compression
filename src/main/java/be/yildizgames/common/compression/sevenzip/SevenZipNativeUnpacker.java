@@ -15,21 +15,16 @@
 
 package be.yildizgames.common.compression.sevenzip;
 
+import be.yildizgames.common.compression.Unpacker;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItem7z;
-import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
-import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
-import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -38,34 +33,42 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * @author Grégory Van den Borre
  */
-public class SevenZipCompression {
+public class SevenZipNativeUnpacker extends SevenZipNative implements Unpacker {
 
-    private final static System.Logger LOGGER = System.getLogger(SevenZipCompression.class.getName());
+    private final static System.Logger LOGGER = System.getLogger(SevenZipNativeUnpacker.class.getName());
 
-    public SevenZipCompression() {
+    public SevenZipNativeUnpacker() {
         super();
     }
 
-    public void unpack(Path archive, Path outputDirectory) throws Exception {
-        RandomAccessFile randomAccessFile = new RandomAccessFile(archive.toAbsolutePath().toString(), "r");
-        try (IInArchive inArchive = SevenZip.openInArchive(null, new RandomAccessFileInStream(randomAccessFile))) {
+    public void unpack(Path archive, Path outputDirectory, boolean keepRootDir) {
+        init();
+        try (
+                var randomAccessFile = new RandomAccessFile(archive.toAbsolutePath().toString(), "r");
+                var inArchive = SevenZip.openInArchive(null, new RandomAccessFileInStream(randomAccessFile))) {
             if (Files.notExists(outputDirectory)) {
                 Files.createDirectories(outputDirectory);
             }
             inArchive.extract(null, false, new UnPackCallback(inArchive, outputDirectory));
+        } catch (Exception e) {
+            LOGGER.log(System.Logger.Level.ERROR, "", e);
         }
+    }
+
+    @Override
+    public void unpackDirectoryToDirectory(Path archive, String directoryToExtract, Path destination) {
+
     }
 
     private record UnPackCallback(IInArchive inArchive, Path outputDirectory) implements IArchiveExtractCallback {
 
         @Override
         public ISequentialOutStream getStream(int i, ExtractAskMode extractAskMode) throws SevenZipException {
-            String path = (String) inArchive.getProperty(i, PropID.PATH);
+            var path = (String) inArchive.getProperty(i, PropID.PATH);
             var file = new File(outputDirectory.toAbsolutePath().toString(), path);
             return data -> {
                 try (var outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
@@ -78,12 +81,12 @@ public class SevenZipCompression {
         }
 
         @Override
-        public void prepareOperation(ExtractAskMode extractAskMode) throws SevenZipException {
+        public void prepareOperation(ExtractAskMode extractAskMode) {
             //Does nothing
         }
 
         @Override
-        public void setOperationResult(ExtractOperationResult extractOperationResult) throws SevenZipException {
+        public void setOperationResult(ExtractOperationResult extractOperationResult) {
             //Does nothing
         }
 
@@ -96,60 +99,8 @@ public class SevenZipCompression {
         }
 
         @Override
-        public void setCompleted(long l) throws SevenZipException {
+        public void setCompleted(long l) {
             //Does nothing
         }
     }
-
-    public void archive(List<Path> files, Path outputDirectory) {
-        LOGGER.log(System.Logger.Level.DEBUG, "Archiving {0} files into {1}", files, outputDirectory);
-        if(!files.isEmpty()) {
-            try (var raf = new RandomAccessFile(outputDirectory.toAbsolutePath().toString(), "rw");
-                 var outArchive = SevenZip.openOutArchive7z()) {
-                outArchive.setLevel(5);
-                outArchive.setSolid(true);
-                outArchive.createArchive(new RandomAccessFileOutStream(raf), files.size(), new ArchiveCallback(files));
-            } catch (Exception e) {
-                LOGGER.log(System.Logger.Level.ERROR, "", e);
-            }
-        }
-    }
-
-    private record ArchiveCallback(List<Path> files) implements IOutCreateCallback<IOutItem7z> {
-
-        public void setOperationResult(boolean operationResultOk)
-                    throws SevenZipException {
-                // Track each operation result here
-            }
-
-            public void setTotal(long total) throws SevenZipException {
-                // Track operation progress here
-            }
-
-            public void setCompleted(long complete) throws SevenZipException {
-                // Track operation progress here
-            }
-
-            public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory) {
-                IOutItem7z item = outItemFactory.createOutItem();
-                var file = this.files.get(index);
-                item.setPropertyPath(file.getFileName().toString());
-                item.setPropertyIsDir(false);
-                try {
-                    item.setDataSize(Files.size(file));
-                } catch (IOException e) {
-                    LOGGER.log(System.Logger.Level.ERROR, "", e);
-                }
-                return item;
-            }
-
-            public ISequentialInStream getStream(int index) throws SevenZipException {
-                try {
-                    return new ByteArrayStream(Files.readAllBytes(this.files.get(index)), true);
-                } catch (IOException e) {
-                    LOGGER.log(System.Logger.Level.ERROR, "", e);
-                    throw new SevenZipException(e);
-                }
-            }
-        }
 }

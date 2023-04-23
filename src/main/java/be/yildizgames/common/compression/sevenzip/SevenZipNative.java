@@ -1,6 +1,6 @@
 /*
  This file is part of the Yildiz-Engine project, licenced under the MIT License  (MIT)
- Copyright (c) 2018-2023 Grégory Van den Borre
+ Copyright (c) 2023 Grégory Van den Borre
  More infos available: https://engine.yildiz-games.be
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -13,29 +13,25 @@
  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package be.yildizgames.common.compression;
+package be.yildizgames.common.compression.sevenzip;
 
-import java.nio.file.Path;
-import java.util.List;
+import net.sf.sevenzipjbinding.SevenZip;
 
 /**
- * Pack an archive.
  * @author Grégory Van den Borre
  */
-public interface Archiver {
+public class SevenZipNative {
 
-    /**
-     * Compress a file.
-     * @param file File to compress, can be directory.
-     * @param destination Compressed file.
-     */
-    void pack(Path file, Path destination);
+    private static boolean init = false;
 
-    /**
-     * Compress a file.
-     * @param files Filed to compress.
-     * @param destination Compressed file.
-     */
-    void pack(List<Path> files, Path destination);
-
+    protected static void init() {
+        if(!init) {
+            try {
+                SevenZip.initLoadedLibraries();
+                init = true;
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
 }

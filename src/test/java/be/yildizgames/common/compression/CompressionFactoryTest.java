@@ -62,12 +62,12 @@ class CompressionFactoryTest {
 
         @Test
         void correctClass() {
-            assertTrue(CompressionFactory.sevenZipUnpacker() instanceof SevenZipUnpacker);
+            assertTrue(CompressionFactory.sevenZipUnpacker(false) instanceof SevenZipUnpacker);
         }
 
         @Test
         void sameInstance() {
-            assertSame(CompressionFactory.sevenZipUnpacker(), CompressionFactory.sevenZipUnpacker());
+            assertSame(CompressionFactory.sevenZipUnpacker(false), CompressionFactory.sevenZipUnpacker(false));
         }
 
     }
@@ -92,12 +92,12 @@ class CompressionFactoryTest {
 
         @Test
         void correctClass() {
-            assertTrue(CompressionFactory.sevenZipArchiver() instanceof SevenZipArchiver);
+            assertTrue(CompressionFactory.sevenZipArchiver(false) instanceof SevenZipArchiver);
         }
 
         @Test
         void sameInstance() {
-            assertSame(CompressionFactory.sevenZipArchiver(), CompressionFactory.sevenZipArchiver());
+            assertSame(CompressionFactory.sevenZipArchiver(false), CompressionFactory.sevenZipArchiver(false));
         }
 
     }

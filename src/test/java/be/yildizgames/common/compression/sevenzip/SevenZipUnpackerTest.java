@@ -44,7 +44,7 @@ class SevenZipUnpackerTest {
 
         @Test
         void happyFlow() throws Exception {
-            Unpacker unpacker = CompressionFactory.sevenZipUnpacker();
+            Unpacker unpacker = CompressionFactory.sevenZipUnpacker(false);
             Path zip = getDestinationPath();
             Assertions.assertFalse(Files.exists(zip.resolve("7zip-folder-1").resolve("7zip-file-1.txt")));
             unpacker.unpack(Helper.get7zMultipleFiles(), zip, true);
