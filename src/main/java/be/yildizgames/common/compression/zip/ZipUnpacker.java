@@ -84,7 +84,20 @@ public class ZipUnpacker implements Unpacker {
 
     @Override
     public final void unpack(Path archive, String fileToExtract, Path destination) {
-        throw new UnsupportedOperationException();
+        try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
+            Files.createDirectories(destination);
+            Enumeration<? extends ZipEntry> entries = file.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry zipentry = entries.nextElement();
+                if(zipentry.getName().equals(fileToExtract)) {
+                    try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(destination)) {
+                        extractFile(in, out);
+                    }
+                }
+            }
+        } catch (IOException ioe) {
+            throw new IllegalStateException(ioe);
+        }
     }
 
     @Override
