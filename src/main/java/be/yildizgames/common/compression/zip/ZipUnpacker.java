@@ -90,7 +90,7 @@ public class ZipUnpacker implements Unpacker {
             while (entries.hasMoreElements()) {
                 ZipEntry zipentry = entries.nextElement();
                 if(zipentry.getName().equals(fileToExtract)) {
-                    try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(destination)) {
+                   try(InputStream in = file.getInputStream(zipentry); OutputStream out = Files.newOutputStream(destination.resolve(fileToExtract))) {
                         extractFile(in, out);
                     }
                 }
