@@ -27,7 +27,6 @@ open module be.yildizgames.common.compression {
     requires be.yildizgames.common.hashing;
     requires org.apache.commons.compress;
     requires sevenzipjbinding;
-    requires org.tukaani.xz;
 
     exports be.yildizgames.common.compression;
 }

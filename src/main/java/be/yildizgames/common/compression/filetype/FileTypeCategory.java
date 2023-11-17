@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -28,18 +27,12 @@ import java.util.Optional;
 public class FileTypeCategory {
 
     /**
-     * Category name.
-     */
-    private final String name;
-
-    /**
      * List of types belonging to this category.
      */
     private final List<FileType> types = new ArrayList<>();
 
     public FileTypeCategory(final String name) {
         super();
-        this.name = Objects.requireNonNull(name);
     }
 
     public final Optional<FileType> is(InputStream stream) throws IOException {

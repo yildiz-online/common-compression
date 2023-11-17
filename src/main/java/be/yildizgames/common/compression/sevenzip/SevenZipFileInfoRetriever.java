@@ -85,15 +85,10 @@ public class SevenZipFileInfoRetriever implements FileInfoRetriever {
     }
 
     private List<FileInfo> computeHashes(Algorithm... algorithms) {
-        System.out.println(1);
         var result = new ArrayList<FileInfo>();
         Map<String, List<FileHash>> hashes = new HashMap<>();
-        System.out.println(2);
         for (var a : algorithms) {
-            System.out.println(3);
-            System.out.println(a);
             try (var sevenZFile = new SevenZFile(this.path.toFile(), SevenZFileOptions.builder().withTryToRecoverBrokenArchives(true).build())) {
-                System.out.println(4);
                 for (var e : sevenZFile.getEntries()) {
                     if (!e.isDirectory()) {
                         var is = sevenZFile.getInputStream(e);
