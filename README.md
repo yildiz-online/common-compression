@@ -20,13 +20,7 @@ Project website:
 https://engine.yildiz-games.be
 
 Issue tracker:
-https://yildiz.atlassian.net/browse/YCCP
-
-Wiki:
-https://yildiz.atlassian.net/wiki
-
-Quality report:
-https://sonarcloud.io/dashboard/index/be.yildiz-games:common-compression
+https://github.com/yildiz-online/common-compression/issues
 
 ## License
 
@@ -51,10 +45,9 @@ In your maven project, add the dependency
 <dependency>
     <groupId>be.yildiz-games</groupId>
     <artifactId>common-compression</artifactId>
-    <version>LATEST</version>
+    <version>2.4.7</version>
 </dependency>
 ```
-Replace LATEST with the correct version.
 
 ## Contact
 Owner of this repository: Grégory Van den Borre
