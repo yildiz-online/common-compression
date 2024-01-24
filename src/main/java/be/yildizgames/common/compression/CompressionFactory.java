@@ -29,8 +29,14 @@ import be.yildizgames.common.compression.zip.ZipUnpacker;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
+ * This class is an entry point for this module, it exposes utilities: archivers, unpackers, file info.
+ * This class is not mutable.
+ * This class does not allow null input.
+ * This class never returns null values.
+ *
  * @author Grégory Van den Borre
  */
 public class CompressionFactory {
@@ -58,7 +64,7 @@ public class CompressionFactory {
     }
 
     public static FileInfoRetriever zipFileInfo(Path path) {
-        return new ZipFileInfoRetriever(path);
+        return new ZipFileInfoRetriever(Objects.requireNonNull(path));
     }
 
     public static Unpacker sevenZipUnpacker(boolean nativeImplementation) {
@@ -77,7 +83,7 @@ public class CompressionFactory {
 
     public static boolean isArchive(Path path) {
         try {
-            return FileTypeCategories.ARCHIVES.is(Files.newInputStream(path)).isPresent();
+            return FileTypeCategories.ARCHIVES.is(Files.newInputStream(Objects.requireNonNull(path))).isPresent();
         } catch (IOException e) {
             System.getLogger(CompressionFactory.class.getName()).log(System.Logger.Level.ERROR, "", e);
         }
@@ -85,7 +91,7 @@ public class CompressionFactory {
     }
 
     private static FileTypes getType(Path path) {
-        try (var stream = Files.newInputStream(path)) {
+        try (var stream = Files.newInputStream(Objects.requireNonNull(path))) {
             int length = 10;
             byte[] buffer = new byte[length];
             stream.read(buffer, 0, length);
@@ -133,7 +139,7 @@ public class CompressionFactory {
     }
 
     public static FileInfoRetriever sevenZipFileInfo(Path path) {
-        return new SevenZipFileInfoRetriever(path);
+        return new SevenZipFileInfoRetriever(Objects.requireNonNull(path));
     }
 
     public static FileInfoRetriever fileInfo(Path path) {
