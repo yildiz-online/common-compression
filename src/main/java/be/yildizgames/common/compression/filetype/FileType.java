@@ -17,9 +17,16 @@ package be.yildizgames.common.compression.filetype;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
+ * Check the file type based on its extension or using magic numbers.
+ * This class is not mutable.
+ * This class does not allow null input.
+ * This class never returns null values.
+ *
  * @author Grégory Van den Borre
  */
 public class FileType {
@@ -31,9 +38,10 @@ public class FileType {
     private final FileTypeBytes bytes;
 
     public FileType(String name, List<String> extensions, FileTypeBytes bytes) {
-        this.name = name;
-        this.extensions = extensions;
-        this.bytes = bytes;
+        super();
+        this.name = Objects.requireNonNull(name);
+        this.extensions = Collections.unmodifiableList(Objects.requireNonNull(extensions));
+        this.bytes = Objects.requireNonNull(bytes);
     }
 
     public final List<String> getExtensions() {
@@ -50,8 +58,8 @@ public class FileType {
     }
 
     /**
-     * Check the type based on extension
-     * @param name File name
+     * Check the type based on extension.
+     * @param name File name.
      * @return true if the extension matches the type.
      */
     public final boolean is(String name) {
@@ -63,11 +71,16 @@ public class FileType {
         return this.extensions.contains(ext);
     }
 
+    /**
+     * Check the type based on magic number.
+     * @param bytes File first 10 bytes.
+     * @return true if the bytes matches the type.
+     */
     public final boolean is(byte[] bytes) {
         return this.bytes.is(bytes);
     }
 
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
