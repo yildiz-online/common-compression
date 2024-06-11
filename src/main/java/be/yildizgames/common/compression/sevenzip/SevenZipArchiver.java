@@ -40,8 +40,12 @@ public class SevenZipArchiver implements Archiver {
     }
 
     @Override
-    public void pack(List<Path> files, Path destination) {
-        throw new UnsupportedOperationException();
+    public final void pack(List<Path> files, Path destination) {
+        try (SevenZOutputFile out = new SevenZOutputFile(destination.toFile())) {
+            files.forEach(file -> addToArchiveCompression(out, file, ""));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private static void addToArchiveCompression(SevenZOutputFile out, Path file, String dir) {

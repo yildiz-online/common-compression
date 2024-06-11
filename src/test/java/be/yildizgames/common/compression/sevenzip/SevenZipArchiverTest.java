@@ -16,10 +16,12 @@
 package be.yildizgames.common.compression.sevenzip;
 
 import be.yildizgames.common.compression.Helper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  * @author Grégory Van den Borre
@@ -31,9 +33,24 @@ class SevenZipArchiverTest {
 
         @Test
         void singleFile() throws Exception {
-            var result = Files.createTempFile("", ".7z");
+            var result = Files.createTempFile("test-SevenZipArchiverTest-singleFile", ".7z");
             var archiver = new SevenZipArchiver();
             archiver.pack(Helper.getPlainTestHashFile(), result);
+        }
+
+        @Test
+        void multipleFiles() throws Exception {
+            var result = Files.createTempFile("test-SevenZipArchiverTest-multipleFiles", ".7z");
+            var archiver = new SevenZipArchiver();
+            var file1 = Helper.getPlainTestHashFile();
+            var file2 = Helper.getPlainBigFile();
+            archiver.pack(List.of(file1, file2), result);
+
+            var destination = Files.createTempDirectory("test-SevenZipArchiverTest-multipleFiles-unpack");
+            var unpacker =  new SevenZipUnpacker();
+            unpacker.unpack(result, destination, false, false);
+            Assertions.assertTrue(Files.exists(destination.resolve(Helper.getPlainTestHashFile())));
+            Assertions.assertTrue(Files.exists(destination.resolve(Helper.getPlainBigFile())));
         }
 
         @Test
