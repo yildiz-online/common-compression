@@ -18,7 +18,6 @@ package be.yildizgames.common.compression.sevenzip;
 import be.yildizgames.common.compression.Unpacker;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
-import org.apache.commons.compress.archivers.sevenz.SevenZFileOptions;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +32,8 @@ public class SevenZipUnpacker implements Unpacker {
 
     @Override
     public final void unpack(Path archive, Path destination, boolean keepRootDir) {
-        try (var sevenZFile = new SevenZFile(archive.toFile(), SevenZFileOptions.builder().withTryToRecoverBrokenArchives(true).build())) {
+
+        try (var sevenZFile = SevenZFile.builder().setPath(archive).setTryToRecoverBrokenArchives(true).get()) {
             if (Files.notExists(destination)) {
                 Files.createDirectories(destination);
             }
@@ -55,7 +55,7 @@ public class SevenZipUnpacker implements Unpacker {
 
     @Override
     public void unpack(Path archive, String fileToExtract, Path destination) {
-        try (var sevenZFile = new SevenZFile(archive.toFile(), SevenZFileOptions.builder().withTryToRecoverBrokenArchives(true).build())) {
+        try (var sevenZFile = SevenZFile.builder().setPath(archive).setTryToRecoverBrokenArchives(true).get()) {
             if (Files.notExists(destination)) {
                 Files.createDirectories(destination);
             }
