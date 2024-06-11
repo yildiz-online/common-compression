@@ -34,6 +34,18 @@ public interface Unpacker {
      */
     void unpack(Path archive, Path destination, boolean keepRootDir);
 
+    /**
+     * Extract a directory and all its content from an archive.
+     *
+     * @param archive     Zip file to extract the data from.
+     * @param destination Path where the directory will be extracted.
+     * @param keepRootDir Keep the root directory or extract all its content.
+     * @param discardSubDirectories Decide to keep subdirectories or to push all files into the root path.
+     * @throws IllegalStateException If the archive file does not exist.
+     */
+    void unpack(Path archive, Path destination, boolean keepRootDir, boolean discardSubDirectories);
+
+
     void unpack(Path archive, String fileToExtract, Path destination);
 
     /**

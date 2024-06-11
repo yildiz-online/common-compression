@@ -74,6 +74,11 @@ public class ZipUnpacker implements Unpacker {
     }
 
     @Override
+    public final void unpack(Path archive, Path destination, boolean keepRootDir, boolean discardSubDirectories) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public final void unpack(Path archive, String fileToExtract, Path destination) {
         try (ZipFile file = new ZipFile(URLDecoder.decode(archive.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
             Files.createDirectories(destination);

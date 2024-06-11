@@ -31,8 +31,7 @@ import java.nio.file.Path;
 public class SevenZipUnpacker implements Unpacker {
 
     @Override
-    public final void unpack(Path archive, Path destination, boolean keepRootDir) {
-
+    public final void unpack(Path archive, Path destination, boolean keepRootDir, boolean discardSubDirectories) {
         try (var sevenZFile = SevenZFile.builder().setPath(archive).setTryToRecoverBrokenArchives(true).get()) {
             if (Files.notExists(destination)) {
                 Files.createDirectories(destination);
@@ -40,10 +39,15 @@ public class SevenZipUnpacker implements Unpacker {
             SevenZArchiveEntry entry = sevenZFile.getNextEntry();
             while (entry != null) {
                 if (entry.isDirectory()) {
-                    if (Files.notExists(destination.resolve(entry.getName()))) {
+                    if (!discardSubDirectories && Files.notExists(destination.resolve(entry.getName()))) {
                         Files.createDirectories(destination.resolve(entry.getName()));
                     }
                 } else {
+                    if(discardSubDirectories) {
+                        var sub = entry.getName().split("/");
+                        var fileOnly = sub.length > 1 ? sub[sub.length - 1] : sub[0];
+                        entry.setName(fileOnly);
+                    }
                     unpackEntry(destination, sevenZFile, entry);
                 }
                 entry = sevenZFile.getNextEntry();
@@ -51,6 +55,11 @@ public class SevenZipUnpacker implements Unpacker {
         } catch (IOException ioe) {
             throw new IllegalStateException(ioe);
         }
+    }
+
+    @Override
+    public final void unpack(Path archive, Path destination, boolean keepRootDir) {
+        unpack(archive, destination, keepRootDir, false);
     }
 
     @Override

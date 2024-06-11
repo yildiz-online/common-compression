@@ -40,6 +40,16 @@ class SevenZipUnpackerTest {
             Assertions.assertFalse(Files.exists(zip.resolve("7zip-folder-1").resolve("7zip-file-1.txt")));
             unpacker.unpack(Helper.get7zMultipleFiles(), zip, true);
             Assertions.assertTrue(Files.exists(zip.resolve("7zip-folder-1").resolve("7zip-file-1.txt")));
+            Assertions.assertTrue(Files.exists(zip.resolve("7zip-folder-1").resolve("7zip-folder-2").resolve("7zip-file-2.txt")));
+        }
+
+        @Test
+        void discardSubDirectories() throws Exception {
+            Unpacker unpacker = CompressionFactory.sevenZipUnpacker(false);
+            Path zip = getDestinationPath();
+            unpacker.unpack(Helper.get7zMultipleFiles(), zip, false, true);
+            Assertions.assertTrue(Files.exists(zip.resolve("7zip-file-1.txt")));
+            Assertions.assertTrue(Files.exists(zip.resolve("7zip-file-2.txt")));
         }
     }
 
