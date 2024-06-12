@@ -42,7 +42,6 @@ public class SevenZipNativeArchiver extends SevenZipNative implements Archiver {
         super();
     }
 
-
     @Override
     public void pack(Path file, Path destination) {
         LOGGER.log(System.Logger.Level.DEBUG, "Archiving {0} files into {1}", file, destination);
@@ -59,8 +58,8 @@ public class SevenZipNativeArchiver extends SevenZipNative implements Archiver {
     }
 
     @Override
-    public void pack(List<Path> files, Path destination) {
-        throw new UnsupportedOperationException();
+    public final void pack(List<Path> files, Path destination) {
+        this.doPack(files.stream().map(SevenZipNativeArchiver::fromFileName).toList(), destination);
     }
 
     private static Entry fromFile(Path path, String root) {
