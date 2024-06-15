@@ -46,23 +46,23 @@ public class SevenZipNativeUnpacker extends SevenZipNative implements Unpacker {
     }
 
     @Override
-    public final void unpack(Path archive, Path outputDirectory, boolean keepRootDir) {
-        init();
-        try (
-                var randomAccessFile = new RandomAccessFile(archive.toAbsolutePath().toString(), "r");
-                var inArchive = SevenZip.openInArchive(null, new RandomAccessFileInStream(randomAccessFile))) {
-            if (Files.notExists(outputDirectory)) {
-                Files.createDirectories(outputDirectory);
-            }
-            inArchive.extract(null, false, new UnPackCallback(inArchive, outputDirectory));
-        } catch (Exception e) {
-            LOGGER.log(System.Logger.Level.ERROR, "", e);
-        }
+    public final void unpack(Path archive, Path destination, boolean keepRootDir) {
+        unpack(archive, destination, keepRootDir, false);
     }
 
     @Override
     public final void unpack(Path archive, Path destination, boolean keepRootDir, boolean discardSubDirectories) {
-        throw new UnsupportedOperationException();
+        init();
+        try (
+                var randomAccessFile = new RandomAccessFile(archive.toAbsolutePath().toString(), "r");
+                var inArchive = SevenZip.openInArchive(null, new RandomAccessFileInStream(randomAccessFile))) {
+            if (Files.notExists(destination)) {
+                Files.createDirectories(destination);
+            }
+            inArchive.extract(null, false, new UnPackCallback(inArchive, destination, discardSubDirectories));
+        } catch (Exception e) {
+            LOGGER.log(System.Logger.Level.ERROR, "", e);
+        }
     }
 
     @Override
@@ -75,12 +75,16 @@ public class SevenZipNativeUnpacker extends SevenZipNative implements Unpacker {
         throw new UnsupportedOperationException();
     }
 
-    private record UnPackCallback(IInArchive inArchive, Path outputDirectory) implements IArchiveExtractCallback {
+    private record UnPackCallback(IInArchive inArchive, Path outputDirectory, boolean discardSubDirectories) implements IArchiveExtractCallback {
 
         @Override
         public ISequentialOutStream getStream(int i, ExtractAskMode extractAskMode) throws SevenZipException {
-            var path = (String) inArchive.getProperty(i, PropID.PATH);
-            var file = new File(outputDirectory.toAbsolutePath().toString(), path);
+            var path = (String) this.inArchive.getProperty(i, PropID.PATH);
+            if(this.discardSubDirectories) {
+                var sub = path.split("/");
+                path = sub.length > 1 ? sub[sub.length - 1] : sub[0];
+            }
+            var file = new File(this.outputDirectory.toAbsolutePath().toString(), path);
             return data -> {
                 try (var outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
                     outputStream.write(data);
